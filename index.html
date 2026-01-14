@@ -1,0 +1,1200 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Happy Birthday 💖</title>
+  <style>
+    :root{
+      --bg1:#0b1020;
+      --bg2:#1a1033;
+      --card: rgba(255,255,255,.08);
+      --stroke: rgba(255,255,255,.16);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.72);
+      --accent1:#ff5ea8;
+      --accent2:#8a5cff;
+      --shadow: 0 20px 60px rgba(0,0,0,.45);
+      --radius: 22px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 800px at 20% 10%, rgba(255,94,168,.18), transparent 60%),
+        radial-gradient(900px 700px at 80% 20%, rgba(138,92,255,.22), transparent 60%),
+        radial-gradient(900px 700px at 50% 90%, rgba(255,255,255,.06), transparent 60%),
+        linear-gradient(160deg, var(--bg1), var(--bg2));
+      overflow-x:hidden;
+    }
+
+    .wrap{
+      min-height:100%;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      padding:28px 16px 60px;
+      gap:18px;
+      position:relative;
+    }
+
+    /* floating hearts (background) */
+    .hearts{position:absolute; inset:0; pointer-events:none; overflow:hidden;}
+    .heart{
+      position:absolute;
+      width:14px; height:14px;
+      transform: rotate(45deg);
+      opacity:.45;
+      filter: blur(.2px);
+      animation: floatUp linear infinite;
+      background: linear-gradient(135deg, var(--accent1), var(--accent2));
+    }
+    .heart::before,.heart::after{
+      content:"";
+      position:absolute;
+      width:14px;height:14px;border-radius:50%;
+      background: inherit;
+    }
+    .heart::before{left:-7px; top:0}
+    .heart::after{left:0; top:-7px}
+    @keyframes floatUp{
+      from{transform: translateY(20vh) rotate(45deg); opacity:0}
+      10%{opacity:.55}
+      to{transform: translateY(-120vh) rotate(45deg); opacity:0}
+    }
+
+    header{
+      width:min(980px, 100%);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:14px 16px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.05);
+      backdrop-filter: blur(10px);
+      border-radius: 999px;
+      box-shadow: 0 8px 30px rgba(0,0,0,.22);
+    }
+    .brand{
+      display:flex; align-items:center; gap:10px;
+      font-weight:700; letter-spacing:.2px;
+    }
+    .dot{
+      width:12px;height:12px;border-radius:50%;
+      background: radial-gradient(circle at 30% 30%, #fff, rgba(255,255,255,.2) 35%, transparent 60%),
+                  linear-gradient(135deg, var(--accent1), var(--accent2));
+      box-shadow: 0 0 18px rgba(255,94,168,.35);
+    }
+    .mini{color:var(--muted);font-size:13px;line-height:1.2}
+    .pill{
+      display:flex; gap:10px; align-items:center;
+      color:var(--muted);
+      font-size:13px;
+    }
+    .pill b{color:var(--text)}
+    .sep{opacity:.4}
+
+    main{
+      width:min(980px, 100%);
+      display:grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap:18px;
+      margin-top:8px;
+    }
+    @media (max-width:860px){
+      main{grid-template-columns:1fr}
+    }
+
+    .card{
+      border:1px solid var(--stroke);
+      background: var(--card);
+      backdrop-filter: blur(12px);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    .card .pad{padding:22px}
+
+    .hero{
+      min-height: 330px;
+      display:flex;
+      align-items:stretch;
+      position:relative;
+    }
+    .hero::before{
+      content:"";
+      position:absolute; inset:-2px;
+      background:
+        radial-gradient(900px 400px at 30% 20%, rgba(255,94,168,.24), transparent 55%),
+        radial-gradient(700px 400px at 80% 30%, rgba(138,92,255,.28), transparent 55%),
+        radial-gradient(700px 500px at 60% 90%, rgba(255,255,255,.07), transparent 60%);
+      pointer-events:none;
+    }
+    .hero .content{
+      position:relative;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      gap:12px;
+      padding:26px;
+      flex:1;
+    }
+
+    h1{
+      margin:0;
+      font-size: clamp(26px, 4.2vw, 44px);
+      line-height:1.05;
+      letter-spacing:-.6px;
+    }
+    .subtitle{
+      margin:0;
+      color: var(--muted);
+      font-size:15px;
+      max-width: 55ch;
+    }
+    .chips{display:flex; flex-wrap:wrap; gap:8px; margin-top:4px;}
+    .chip{
+      font-size:12px;
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(0,0,0,.12);
+      color: rgba(255,255,255,.82);
+      cursor: default;
+    }
+
+    .actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;}
+    button, a.btn{
+      border:0;
+      cursor:pointer;
+      padding:12px 14px;
+      border-radius: 14px;
+      font-weight:700;
+      letter-spacing:.2px;
+      transition: transform .12s ease, filter .12s ease, background .12s ease;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      text-decoration:none;
+      color: var(--text);
+    }
+    button:active, a.btn:active{transform: translateY(1px) scale(.99)}
+    .primary{
+      background: linear-gradient(135deg, var(--accent1), var(--accent2));
+      box-shadow: 0 12px 28px rgba(138,92,255,.20);
+    }
+    .ghost{
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.16);
+    }
+    .tiny{font-size:12px;color: var(--muted);margin-top:8px;}
+
+    .side{display:grid; gap:18px; align-content:start;}
+
+    /* overlay (generic) */
+    .overlay{
+      position:fixed;
+      inset:0;
+      background: rgba(0,0,0,.55);
+      backdrop-filter: blur(8px);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      z-index:50;
+    }
+    .overlay.show{display:flex}
+    .modal{
+      width:min(760px, 100%);
+      border-radius: 24px;
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(20,16,40,.78);
+      box-shadow: 0 30px 90px rgba(0,0,0,.6);
+      overflow:hidden;
+      position:relative;
+    }
+    .modal header{
+      width:100%;
+      border-radius:0;
+      border:0;
+      border-bottom:1px solid rgba(255,255,255,.12);
+      box-shadow:none;
+      background: rgba(255,255,255,.04);
+    }
+    .modal .content{padding:22px 18px 18px}
+    .letter{
+      line-height:1.75;
+      color: rgba(255,255,255,.88);
+      font-size: 15px;
+      white-space:pre-wrap;
+    }
+    .modal .footer{
+      display:flex; gap:10px; justify-content:flex-end;
+      padding: 0 18px 18px;
+    }
+
+    footer{
+      width:min(980px, 100%);
+      color: rgba(255,255,255,.55);
+      font-size:12px;
+      text-align:center;
+      margin-top:auto;
+      padding-top:12px;
+    }
+
+    /* confetti */
+    canvas#confetti{
+      position:fixed; inset:0;
+      pointer-events:none;
+      z-index:60;
+      display:none;
+    }
+
+    /* =========================
+       ✅ GATE overlay
+       ========================= */
+    .gate{
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display:none;
+    }
+    .gate.show{display:block}
+
+    .gateBackdrop{
+      position:absolute; inset:0;
+      background: rgba(0,0,0,.35);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+
+    /* blur konten index */
+    body.gated > .wrap{
+      filter: blur(10px);
+      pointer-events:none;
+      user-select:none;
+    }
+
+    .gateCard{
+      position:relative;
+      width: min(560px, calc(100% - 32px));
+      margin: 8vh auto 0;
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.08);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 30px 90px rgba(0,0,0,.55);
+      padding: 18px;
+      color: rgba(255,255,255,.92);
+    }
+
+    .gateTop{
+      display:flex; align-items:center; gap:12px;
+      padding: 6px 6px 14px;
+    }
+    .gateDot{
+      width:12px;height:12px;border-radius:50%;
+      background: radial-gradient(circle at 30% 30%, #fff, rgba(255,255,255,.2) 35%, transparent 60%),
+                  linear-gradient(135deg, var(--accent1), var(--accent2));
+      box-shadow: 0 0 18px rgba(255,94,168,.35);
+    }
+    .gateTitle{font-weight:900; letter-spacing:.2px}
+    .gateSub{font-size:13px; color: rgba(255,255,255,.70); margin-top:2px}
+
+    .gateBody{padding: 4px 6px 8px}
+    .gateText{margin:0 0 14px; color: rgba(255,255,255,.78); line-height:1.45}
+
+    /* tombol play model pill */
+    .gateBtn{
+      width:100%;
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.06);
+      color: rgba(255,255,255,.92);
+      padding: 12px 14px;
+      border-radius: 999px;
+      font-weight: 800;
+      cursor:pointer;
+      transition: transform .12s ease, filter .12s ease, box-shadow .2s ease, opacity .2s ease;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    .gateBtn:hover{filter: brightness(1.06)}
+    .gateBtn:active{transform: scale(.99)}
+    .gateBtn.primary{
+      border:0;
+      background: linear-gradient(135deg, var(--accent1), var(--accent2));
+      box-shadow: 0 12px 28px rgba(138,92,255,.20);
+    }
+
+    /* disabled gate button */
+    .gateBtn.disabled{
+      opacity:.55;
+      cursor:not-allowed;
+      filter: grayscale(.2);
+      box-shadow:none;
+    }
+
+    .gateHint{
+      margin-top:10px;
+      font-size:12px;
+      color: rgba(255,255,255,.60);
+      text-align:center;
+    }
+
+    /* reveal animation */
+    .gateBody, .gateReveal{transition: opacity .45s ease, transform .55s ease;}
+    .gateBody.hiding{opacity:0; transform: translateY(-6px); pointer-events:none;}
+    .gateReveal{padding: 4px 6px 10px; opacity:0; transform: translateY(10px);}
+    .gateReveal.hidden{display:none}
+    .gateReveal.showing{opacity:1; transform: translateY(0);}
+
+    .gateMedia{
+      border-radius: 18px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.12);
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      position:relative;
+      isolation:isolate;
+    }
+    /* Foto ikut ukuran asli (tetap aman di layar) */
+    .gateMedia img{
+      width:auto;
+      height:auto;
+      max-width:92vw;
+      max-height:52vh;
+      object-fit:contain;
+      display:block;
+      position:relative;
+      z-index:1;
+    }
+
+    /* Love tiny anim on photo */
+    .loveLayer{
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      z-index:2;
+      opacity:0;
+      transition: opacity .35s ease;
+    }
+    .gateMedia.loving .loveLayer{opacity:1}
+    .tinyLove{
+      position:absolute;
+      width:10px; height:10px;
+      transform: rotate(45deg);
+      background: linear-gradient(135deg, rgba(255,94,168,.95), rgba(138,92,255,.95));
+      opacity:.0;
+      filter: drop-shadow(0 6px 12px rgba(0,0,0,.28));
+      animation: loveFloat 1.8s ease-in-out infinite;
+      border-radius: 2px;
+    }
+    .tinyLove::before,.tinyLove::after{
+      content:"";
+      position:absolute;
+      width:10px; height:10px;
+      border-radius:50%;
+      background: inherit;
+    }
+    .tinyLove::before{left:-5px; top:0}
+    .tinyLove::after{left:0; top:-5px}
+    @keyframes loveFloat{
+      0%{ transform: translateY(10px) rotate(45deg) scale(.9); opacity:0}
+      20%{opacity:.55}
+      50%{ transform: translateY(-6px) rotate(45deg) scale(1.05); opacity:.65}
+      80%{opacity:.35}
+      100%{ transform: translateY(10px) rotate(45deg) scale(.92); opacity:0}
+    }
+
+    .gateMsg{margin-top:12px}
+    .gateMsgTitle{font-weight:900}
+    .gateMsgText{
+      margin-top:6px;
+      font-size:13px;
+      color: rgba(255,255,255,.78);
+      line-height:1.45;
+      min-height: 3.2em;
+    }
+
+    .gateActions{display:flex; gap:10px; margin-top:12px;}
+    .gateActions .gateBtn{width:auto; flex:1}
+
+    /* music wiggle */
+    .musicIcon{display:inline-block; transform-origin:center;}
+    .gateBtn.on{box-shadow: 0 12px 28px rgba(255,94,168,.14);}
+    .gateBtn.on .musicIcon{
+      animation: wiggle .9s ease-in-out infinite;
+      filter: drop-shadow(0 0 10px rgba(138,92,255,.25));
+    }
+    @keyframes wiggle{
+      0%,100%{transform: rotate(-8deg) scale(1.02)}
+      50%{transform: rotate(8deg) scale(1.02)}
+    }
+
+    /* typing caret */
+    .caret{
+      display:inline-block;
+      width: 8px;
+      margin-left: 2px;
+      opacity:.9;
+      transform: translateY(1px);
+      animation: blink 0.9s steps(1) infinite;
+    }
+    @keyframes blink{
+      0%,49%{opacity:1}
+      50%,100%{opacity:0}
+    }
+
+    /* gate countdown block (di bawah tombol) */
+    .gateCount{
+      margin-top:14px;
+      padding: 12px 12px;
+      border-radius: 18px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.10);
+    }
+    .gateCountTop{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      color: rgba(255,255,255,.78);
+      font-size:12px;
+      margin-bottom:8px;
+    }
+    .gateCountTop b{color: rgba(255,255,255,.92)}
+    .gateCountGrid{
+      display:flex;
+      gap:10px;
+      justify-content:space-between;
+    }
+    .gBox{
+      flex:1;
+      text-align:center;
+      padding:10px 8px;
+      border-radius: 16px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.12);
+    }
+    .gNum{font-size:20px;font-weight:900}
+    .gLbl{margin-top:2px;font-size:11px;color: rgba(255,255,255,.65)}
+
+    /* ===== Gate exit animation ===== */
+    .gate.exiting .gateBackdrop{ animation: gateFadeBackdrop .75s ease forwards; }
+    .gate.exiting .gateCard{ animation: gateFadeCard .75s ease forwards; }
+    @keyframes gateFadeBackdrop{ from{opacity:1} to{opacity:0} }
+    @keyframes gateFadeCard{
+      from{opacity:1; transform: translateY(0) scale(1)}
+      to{opacity:0; transform: translateY(16px) scale(.98)}
+    }
+
+    /* =========================
+       ✅ Popup dalam popup (lock alert)
+       ========================= */
+    .miniPop{
+      position:absolute;
+      left:50%;
+      top:18px;
+      transform: translateX(-50%);
+      width: min(520px, calc(100% - 18px));
+      border-radius: 18px;
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(20,16,40,.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 22px 70px rgba(0,0,0,.55);
+      padding: 12px 12px;
+      z-index: 10000;
+      display:none;
+      opacity:0;
+    }
+    .miniPop.show{
+      display:block;
+      animation: popIn .25s ease forwards;
+    }
+    @keyframes popIn{
+      from{opacity:0; transform: translateX(-50%) translateY(-6px) scale(.98)}
+      to{opacity:1; transform: translateX(-50%) translateY(0) scale(1)}
+    }
+    .miniPopRow{
+      display:flex; gap:10px; align-items:flex-start;
+    }
+    .miniIcon{
+      width:34px;height:34px;border-radius:12px;
+      display:grid;place-items:center;
+      background: rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.12);
+      flex:0 0 auto;
+    }
+    .miniTitle{font-weight:900}
+    .miniText{margin-top:2px;font-size:13px;color: rgba(255,255,255,.75);line-height:1.35}
+    .miniActions{
+      display:flex; gap:10px; justify-content:flex-end;
+      margin-top:10px;
+    }
+    .miniBtn{
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.06);
+      color: rgba(255,255,255,.92);
+      padding:10px 12px;
+      border-radius: 999px;
+      font-weight:800;
+      cursor:pointer;
+    }
+    .miniBtn.primary{
+      border:0;
+      background: linear-gradient(135deg, var(--accent1), var(--accent2));
+      box-shadow: 0 12px 28px rgba(138,92,255,.18);
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="confetti"></canvas>
+
+  <!-- ✅ GATE overlay -->
+  <div id="gate" class="gate show" aria-hidden="false">
+    <div class="gateBackdrop"></div>
+
+    <div class="gateCard" role="dialog" aria-modal="true" aria-label="Surat sebelum masuk">
+
+      <!-- ✅ mini popup dalam popup -->
+      <div id="gateAlert" class="miniPop" aria-live="polite">
+        <div class="miniPopRow">
+          <div class="miniIcon">🤪</div>
+          <div style="flex:1">
+            <div class="miniTitle">Eits tunggu dulu…</div>
+            <div class="miniText" id="gateAlertText">
+              Hanya bisa dibuka pada saat kamu ulang tahun.
+            </div>
+          </div>
+        </div>
+        <div class="miniActions">
+          <button class="miniBtn" id="gateAlertClose" type="button">Oke</button>
+          <button class="miniBtn primary" id="gateAlertOk" type="button">Siap 😝</button>
+        </div>
+      </div>
+
+      <div class="gateTop">
+        <div class="gateDot"></div>
+        <div>
+          <div class="gateTitle">Buat kamu 💌</div>
+          <div class="gateSub">Buka dulu ya sebelum masuk 😋</div>
+        </div>
+      </div>
+
+      <div id="gateBody" class="gateBody">
+        <p class="gateText">
+          Ada pesan kecil buat kamu. Klik tombol di bawah ya 😊
+        </p>
+
+        <button id="gateOpen" class="gateBtn primary" type="button">
+          Buka pesannya ✨ <span class="musicIcon">🎵</span>
+        </button>
+
+        <!-- ✅ COUNTDOWN DI BAWAH GATE -->
+        <div class="gateCount" aria-label="Countdown">
+          <div class="gateCountTop">
+            <span>Hitungan Mundur Menuju</span>
+            <b id="gateCountDate">—</b>
+          </div>
+          <div class="gateCountGrid">
+            <div class="gBox"><div class="gNum" id="gD">0</div><div class="gLbl">Hari</div></div>
+            <div class="gBox"><div class="gNum" id="gH">00</div><div class="gLbl">Jam</div></div>
+            <div class="gBox"><div class="gNum" id="gM">00</div><div class="gLbl">Menit</div></div>
+            <div class="gBox"><div class="gNum" id="gS">00</div><div class="gLbl">Detik</div></div>
+          </div>
+          <div class="gateHint" id="gateCountNote" style="margin-top:8px">
+            
+          </div>
+        </div>
+
+        <div class="gateHint" style="margin-top:12px">
+          Made with love 💗 @rahmadyxz
+        </div>
+      </div>
+
+      <div id="gateReveal" class="gateReveal hidden">
+        <div class="gateMedia" id="gateMedia">
+          <img id="gateImg" src="images/cover.jpg" alt="Foto" />
+          <div class="loveLayer" id="loveLayer"></div>
+        </div>
+
+        <div class="gateMsg">
+          <div class="gateMsgTitle">Happy birthday 🤍</div>
+          <div class="gateMsgText" id="gateText"></div>
+        </div>
+
+        <div class="gateActions">
+          <button id="gateReplay" class="gateBtn" type="button">Ulang lagu 🎵</button>
+        </div>
+
+        <div class="gateHint">Tunggu sampai lagunya habis ya ^_^</div>
+        <div class="gateHint">Made with love 💗 @rahmadyxz</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ✅ AUDIO untuk gate (pake file lokal) -->
+  <audio id="bgm" preload="auto">
+    <source src="birthday.mp3" type="audio/mpeg" />
+  </audio>
+
+  <div class="wrap">
+    <div class="hearts" id="hearts"></div>
+
+    <header>
+      <div class="brand">
+        <span class="dot"></span>
+        <div>
+          <div>Untuk <span id="nameTop">Doi Kamu</span> 💖</div>
+          <div class="mini" id="dateTop">—</div>
+        </div>
+      </div>
+      <div class="pill">
+        <span><b id="fromTop"></b></span>
+        <span class="sep"></span>
+        <span class="mini" id="tagline">“semoga kamu selalu bahagia”</span>
+      </div>
+    </header>
+
+    <main>
+      <section class="card hero">
+        <div class="content">
+          <h1>
+            Happy Birthday,<br />
+            <span id="nameHero">Imelia Rinjani Az-Zahra</span> ✨
+          </h1>
+          <p class="subtitle" id="subtitle"></p>
+
+          <div class="chips">
+            <span class="chip">🎂 Ulang tahun ke-<span id="ageChip">?</span></span>
+            <span class="chip">💌 Ada surat kecil</span>
+            <span class="chip">📸 Ada foto kita</span>
+          </div>
+
+          <div class="actions">
+            <button class="primary" id="openLetter">Buka surat 💌</button>
+            <a class="btn ghost" href="memories.html">Lihat foto 📷</a>
+            <a class="btn ghost" href="video.html">Lihat video 📷</a>
+          </div>
+
+          <div class="tiny">
+            Catatan: Buka 1/1 yaa hehe”.
+          </div>
+        </div>
+      </section>
+
+      <aside class="side">
+        <section class="card" id="wishes">
+          <div class="pad">
+            <h2 style="margin:0 0 6px 0; font-size:18px;">Harapan aku buat kamu</h2>
+            <ul style="margin:10px 0 0 18px; color:var(--muted); line-height:1.7;">
+              <li>Semoga sehat, tenang, dan makin sayang sama diri sendiri.</li>
+              <li>Semoga yang kamu usahain pelan-pelan jadi nyata.</li>
+              <li>Semoga kita bisa ketawa bareng lebih sering.</li>
+            </ul>
+          </div>
+        </section>
+      </aside>
+    </main>
+
+    <footer>Made with love 💗 @rahmadyxz</footer>
+  </div>
+
+  <!-- Letter Modal -->
+  <div class="overlay" id="overlay" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Surat ulang tahun">
+      <header>
+        <div class="brand">
+          <span class="dot"></span>
+          <div>
+            <div>Surat buat <span id="nameLetter">Imelia Rinjani Az-Zahra</span></div>
+            <div class="mini" id="dateLetter">—</div>
+          </div>
+        </div>
+      </header>
+
+      <div class="content">
+        <div class="letter" id="letterText"></div>
+      </div>
+
+      <div class="footer">
+        <button class="ghost" id="closeLetter" style="border-radius:999px; padding:10px 12px;">Tutup ✖</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /** ====== EDIT BAGIAN INI ====== */
+    const CONFIG = {
+      toName: "Imelia Rinjani Az-Zahra",
+      fromName: "",
+      tagline: "“happy birthday, my favorite person.”",
+      birthday: "2026-01-15", // gate unlock pakai (bulan+tanggal) dari sini
+      age: "18",
+      subtitle:
+        "Hari ini bukan cuma ulang tahun kamu—ini hari spesial yang bikin dunia jadi sedikit lebih manis. Aku bikin halaman kecil ini biar kamu bisa senyum setiap kali buka.",
+      letter:
+`Hai kamu 💖
+
+Selamat ulang tahun ya. Makasih udah jadi kamu—yang kadang cerewet, kadang lucu, tapi selalu bikin aku ngerasa “rumah”.
+Semoga di umur baru ini kamu makin bahagia, makin kuat, dan makin dikelilingi hal-hal baik.
+
+Aku bangga sama kamu.
+Dan aku sayang kamu, banyak. 💖
+
+— @rahmadyxz`,
+
+      // Gate message (typing)
+      gateMessage:
+        "Semoga hari ini kamu senyum terus ya. Aku bangga sama kamu. 💖",
+
+      // Musik gate
+      musicVolume: 0.55,
+      musicFadeInMs: 1200,
+
+      // Typing
+      typingSpeedMs: 28,
+      typingRandomJitter: 22,
+      typingStartDelayMs: 240,
+
+      // Pesan lock (popup dalam popup)
+      lockedMessage:
+        "Hanya bisa dibuka pada saat kamu ulang tahun 💗🤍"
+    };
+    /** =========================== */
+
+    // ===== Helpers =====
+    const fmtDateID = (d) => new Intl.DateTimeFormat("id-ID", { dateStyle:"long" }).format(d);
+    const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
+    // next birthday (buat countdown & label)
+    function nextBirthdayDate(iso){
+      const parts = iso.split("-").map(Number);
+      const m = parts[1], dd = parts[2];
+      const now = new Date();
+      let target = new Date(now.getFullYear(), m-1, dd, 0, 0, 0, 0);
+      if (target.getTime() <= now.getTime()) {
+        target = new Date(now.getFullYear()+1, m-1, dd, 0, 0, 0, 0);
+      }
+      return target;
+    }
+
+    // unlock gate only when TODAY matches month+day of birthday
+    function isBirthdayToday(iso){
+      const parts = iso.split("-").map(Number);
+      const m = parts[1], dd = parts[2];
+      const now = new Date();
+      return (now.getMonth()+1 === m) && (now.getDate() === dd);
+    }
+
+    // ===== Gate elements =====
+    const gate = document.getElementById("gate");
+    const gateOpen = document.getElementById("gateOpen");
+    const gateBody = document.getElementById("gateBody");
+    const gateReveal = document.getElementById("gateReveal");
+    const gateSkip = document.getElementById("gateSkip");
+    const gateReplay = document.getElementById("gateReplay");
+    const gateTextEl = document.getElementById("gateText");
+    const bgm = document.getElementById("bgm");
+    const gateMedia = document.getElementById("gateMedia");
+    const loveLayer = document.getElementById("loveLayer");
+
+    // gate countdown elements
+    const gateCountDate = document.getElementById("gateCountDate");
+    const gateCountNote = document.getElementById("gateCountNote");
+    const gD = document.getElementById("gD");
+    const gH = document.getElementById("gH");
+    const gM = document.getElementById("gM");
+    const gS = document.getElementById("gS");
+
+    // mini popup (lock alert)
+    const gateAlert = document.getElementById("gateAlert");
+    const gateAlertText = document.getElementById("gateAlertText");
+    const gateAlertClose = document.getElementById("gateAlertClose");
+    const gateAlertOk = document.getElementById("gateAlertOk");
+
+    // start gated
+    document.body.classList.add("gated");
+    bgm.volume = 0;
+
+    function closeGate(){
+      gate.classList.add("exiting");
+      setTimeout(() => {
+        gate.classList.remove("show");
+        gate.classList.remove("exiting");
+        gate.setAttribute("aria-hidden", "true");
+        document.body.classList.remove("gated");
+      }, 780);
+    }
+
+    function fadeVolume(target=0.55, ms=1200){
+      const start = bgm.volume;
+      const delta = target - start;
+      const t0 = performance.now();
+      function step(t){
+        const p = Math.min((t - t0) / ms, 1);
+        const ease = 1 - Math.pow(1 - p, 3);
+        bgm.volume = Math.max(0, Math.min(1, start + delta * ease));
+        if(p < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+
+    async function playMusicFromStart(btn){
+      try { bgm.currentTime = 0; } catch(e){}
+      try{
+        await bgm.play();
+        if(btn) btn.classList.add("on");
+        fadeVolume(typeof CONFIG.musicVolume === "number" ? CONFIG.musicVolume : 0.55, CONFIG.musicFadeInMs || 1200);
+      }catch(err){
+        if(btn) btn.classList.remove("on");
+        alert("Browser ngeblok autoplay 😄 Klik tombolnya sekali lagi ya.");
+        throw err;
+      }
+    }
+
+    // ===== Typing effect =====
+    let typingAbort = { stop:false };
+    function stopTyping(){ typingAbort.stop = true; }
+
+    async function typeText(el, text, opts){
+      typingAbort.stop = false;
+      const speed = opts.speedMs ?? 28;
+      const jitter = opts.jitter ?? 18;
+
+      el.innerHTML = "";
+      const txt = document.createElement("span");
+      txt.className = "txt";
+      const caret = document.createElement("span");
+      caret.className = "caret";
+      caret.textContent = "▍";
+      el.appendChild(txt);
+      el.appendChild(caret);
+
+      for(let i=0;i<text.length;i++){
+        if(typingAbort.stop) break;
+        txt.textContent += text[i];
+        const delay = speed + Math.random()*jitter;
+        await sleep(delay);
+      }
+
+      await sleep(220);
+      caret.style.animation = "none";
+      caret.style.opacity = "0";
+      await sleep(160);
+      caret.remove();
+
+      if(typingAbort.stop) txt.textContent = text;
+    }
+
+    gateTextEl.addEventListener("click", () => {
+      stopTyping();
+      const span = gateTextEl.querySelector(".txt");
+      if(span) span.textContent = CONFIG.gateMessage;
+      else gateTextEl.textContent = CONFIG.gateMessage;
+    });
+
+    // ===== Love overlay on photo =====
+    function buildLove(){
+      loveLayer.innerHTML = "";
+      const n = 12;
+      for(let i=0;i<n;i++){
+        const h = document.createElement("div");
+        h.className = "tinyLove";
+        const x = 10 + Math.random()*80;
+        const y = 10 + Math.random()*70;
+        const d = 1.4 + Math.random()*1.6;
+        const delay = Math.random()*0.9;
+        const size = 8 + Math.random()*8;
+
+        h.style.left = x + "%";
+        h.style.top = y + "%";
+        h.style.width = size + "px";
+        h.style.height = size + "px";
+        h.style.animationDuration = d + "s";
+        h.style.animationDelay = delay + "s";
+        loveLayer.appendChild(h);
+      }
+    }
+    buildLove();
+    function setLoving(on){
+      gateMedia.classList.toggle("loving", !!on);
+      if(on) buildLove();
+    }
+
+    // ===== Locked popup in gate =====
+    function showGateAlert(msg){
+      gateAlertText.textContent = msg || CONFIG.lockedMessage;
+      gateAlert.classList.add("show");
+      // auto hide after 3s (optional)
+      clearTimeout(showGateAlert._t);
+      showGateAlert._t = setTimeout(() => {
+        gateAlert.classList.remove("show");
+      }, 3200);
+    }
+    gateAlertClose.addEventListener("click", () => gateAlert.classList.remove("show"));
+    gateAlertOk.addEventListener("click", () => gateAlert.classList.remove("show"));
+
+    // ===== Gate unlock logic (button disabled before birthday) =====
+    function setGateButtonState(){
+      const allowed = isBirthdayToday(CONFIG.birthday);
+      if(allowed){
+        gateOpen.classList.remove("disabled");
+        gateOpen.disabled = false;
+        gateOpen.title = "";
+      } else {
+        gateOpen.classList.add("disabled");
+        gateOpen.disabled = false; // tetap bisa diklik buat munculin popup
+        gateOpen.title = "Belum bisa dibuka";
+      }
+      return allowed;
+    }
+
+    // ===== Gate Countdown (always runs) =====
+    const target = nextBirthdayDate(CONFIG.birthday);
+    gateCountDate.textContent = fmtDateID(target);
+
+    function tickGateCountdown(){
+      const now = new Date();
+      let diff = target.getTime() - now.getTime();
+      if(diff < 0) diff = 0;
+
+      const days = Math.floor(diff / (1000*60*60*24));
+      const hours = Math.floor((diff / (1000*60*60)) % 24);
+      const mins = Math.floor((diff / (1000*60)) % 60);
+      const secs = Math.floor((diff / 1000) % 60);
+
+      gD.textContent = String(days);
+      gH.textContent = String(hours).padStart(2,"0");
+      gM.textContent = String(mins).padStart(2,"0");
+      gS.textContent = String(secs).padStart(2,"0");
+
+      const allowed = isBirthdayToday(CONFIG.birthday);
+      if(allowed){
+        gateCountNote.textContent = "Sekarang udah waktunya 🎂 Silakan dibuka 🤍";
+      } else {
+        gateCountNote.textContent = "";
+      }
+
+      // update state each tick (biar pas jam 00:00 langsung unlock)
+      setGateButtonState();
+    }
+    tickGateCountdown();
+    setInterval(tickGateCountdown, 1000);
+
+    // ===== Gate Open Click =====
+    gateOpen.addEventListener("click", async () => {
+      const allowed = isBirthdayToday(CONFIG.birthday);
+
+      if(!allowed){
+        showGateAlert(CONFIG.lockedMessage);
+        return;
+      }
+
+      // reveal animation
+      gateBody.classList.add("hiding");
+      gateReveal.classList.remove("hidden");
+      void gateReveal.offsetHeight;
+      gateReveal.classList.add("showing");
+      setTimeout(() => { gateBody.style.display = "none"; }, 460);
+
+      // photo love anim ON
+      setLoving(true);
+
+      // play music
+      await playMusicFromStart(gateOpen);
+
+      // typing
+      gateTextEl.textContent = "";
+      await sleep(CONFIG.typingStartDelayMs || 200);
+      typeText(gateTextEl, CONFIG.gateMessage, {
+        speedMs: CONFIG.typingSpeedMs,
+        jitter: CONFIG.typingRandomJitter
+      });
+
+      // auto close when finished
+      bgm.onended = () => {
+        setLoving(false);
+        closeGate();
+      };
+    });
+
+    gateReplay.addEventListener("click", async () => {
+      await playMusicFromStart(gateOpen);
+    });
+
+    gateSkip.addEventListener("click", () => {
+      stopTyping();
+      setLoving(false);
+      bgm.pause();
+      closeGate();
+    });
+
+    // ===== Put config to UI =====
+    const nameTop = document.getElementById("nameTop");
+    const nameHero = document.getElementById("nameHero");
+    const nameLetter = document.getElementById("nameLetter");
+    const fromTop = document.getElementById("fromTop");
+    const tagline = document.getElementById("tagline");
+    const subtitle = document.getElementById("subtitle");
+    const ageChip = document.getElementById("ageChip");
+    const dateTop = document.getElementById("dateTop");
+    const dateLetter = document.getElementById("dateLetter");
+    const letterText = document.getElementById("letterText");
+
+    nameTop.textContent = CONFIG.toName;
+    nameHero.textContent = CONFIG.toName;
+    nameLetter.textContent = CONFIG.toName;
+    fromTop.textContent = CONFIG.fromName;
+    tagline.textContent = CONFIG.tagline;
+    subtitle.textContent = CONFIG.subtitle;
+    ageChip.textContent = CONFIG.age;
+
+    // header dates
+    dateTop.textContent = fmtDateID(target);
+    dateLetter.textContent = fmtDateID(target);
+    letterText.textContent = CONFIG.letter;
+
+    // ===== Hearts background =====
+    const hearts = document.getElementById("hearts");
+    function spawnHearts(){
+      const n = 18;
+      hearts.innerHTML = "";
+      for(let i=0;i<n;i++){
+        const el = document.createElement("div");
+        el.className = "heart";
+        const left = Math.random()*100;
+        const dur = 6 + Math.random()*10;
+        const delay = Math.random()*4;
+        const size = 10 + Math.random()*14;
+        el.style.left = left + "vw";
+        el.style.bottom = (-20 - Math.random()*40) + "vh";
+        el.style.animationDuration = dur + "s";
+        el.style.animationDelay = delay + "s";
+        el.style.width = size + "px";
+        el.style.height = size + "px";
+        hearts.appendChild(el);
+      }
+    }
+    spawnHearts();
+
+    // ===== Letter modal =====
+    const overlay = document.getElementById("overlay");
+    document.getElementById("openLetter").addEventListener("click", () => {
+      overlay.classList.add("show");
+      overlay.setAttribute("aria-hidden","false");
+    });
+    function closeModal(){
+      overlay.classList.remove("show");
+      overlay.setAttribute("aria-hidden","true");
+    }
+    document.getElementById("closeLetter").addEventListener("click", closeModal);
+    overlay.addEventListener("click", (e) => { if(e.target === overlay) closeModal(); });
+
+    document.addEventListener("keydown", (e) => {
+      if(e.key === "Escape"){
+        closeModal();
+        gateAlert.classList.remove("show");
+      }
+    });
+
+    // ===== Toast =====
+    function toast(msg){
+      const t = document.createElement("div");
+      t.textContent = msg;
+      t.style.position = "fixed";
+      t.style.left = "50%";
+      t.style.bottom = "22px";
+      t.style.transform = "translateX(-50%)";
+      t.style.padding = "10px 12px";
+      t.style.borderRadius = "14px";
+      t.style.border = "1px solid rgba(255,255,255,.18)";
+      t.style.background = "rgba(20,16,40,.78)";
+      t.style.backdropFilter = "blur(10px)";
+      t.style.boxShadow = "0 18px 45px rgba(0,0,0,.45)";
+      t.style.zIndex = 80;
+      t.style.fontSize = "13px";
+      document.body.appendChild(t);
+      setTimeout(() => t.remove(), 2100);
+    }
+
+    // ===== Confetti =====
+    const canvas = document.getElementById("confetti");
+    const ctx = canvas.getContext("2d");
+    let particles = [];
+    let anim = null;
+
+    function resize(){
+      canvas.width = innerWidth * devicePixelRatio;
+      canvas.height = innerHeight * devicePixelRatio;
+      ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);
+    }
+    addEventListener("resize", resize);
+    resize();
+
+    function popConfetti(){
+      canvas.style.display = "block";
+      const count = 220;
+      particles = Array.from({length:count}).map(() => ({
+        x: innerWidth/2 + (Math.random()-0.5)*120,
+        y: innerHeight/2 + (Math.random()-0.5)*60,
+        vx: (Math.random()-0.5)*10,
+        vy: (Math.random()-0.9)*12,
+        r: 2 + Math.random()*4,
+        rot: Math.random()*Math.PI,
+        vr: (Math.random()-0.5)*0.2,
+        life: 70 + Math.random()*40
+      }));
+      if(anim) cancelAnimationFrame(anim);
+      loop();
+      setTimeout(() => { canvas.style.display="none"; }, 1600);
+    }
+
+    function loop(){
+      ctx.clearRect(0,0,innerWidth,innerHeight);
+      particles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.18;
+        p.rot += p.vr;
+        p.life -= 1;
+
+        ctx.save();
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot);
+        ctx.globalAlpha = Math.max(p.life/100, 0);
+        ctx.fillStyle = "rgba(255,255,255,.9)";
+        ctx.fillRect(-p.r, -p.r, p.r*2, p.r*2);
+        ctx.restore();
+      });
+      particles = particles.filter(p => p.life > 0 && p.y < innerHeight + 40);
+      if(particles.length){
+        anim = requestAnimationFrame(loop);
+      } else {
+        ctx.clearRect(0,0,innerWidth,innerHeight);
+      }
+    }
+
+    document.getElementById("boom").addEventListener("click", () => { popConfetti(); toast("Yeay! 🎉"); });
+    document.getElementById("anotherBoom").addEventListener("click", () => { popConfetti(); toast("Sekali lagi! 🎉"); });
+
+    // init gate button state
+    setGateButtonState();
+  </script>
+</body>
+</html>

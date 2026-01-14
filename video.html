@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Video 🎬</title>
+  <style>
+    :root{
+      --bg1:#0b1020;
+      --bg2:#1a1033;
+      --card: rgba(255,255,255,.08);
+      --stroke: rgba(255,255,255,.16);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.72);
+      --accent1:#ff5ea8;
+      --accent2:#8a5cff;
+      --shadow: 0 20px 60px rgba(0,0,0,.45);
+      --radius: 22px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 800px at 20% 10%, rgba(255,94,168,.18), transparent 60%),
+        radial-gradient(900px 700px at 80% 20%, rgba(138,92,255,.22), transparent 60%),
+        radial-gradient(900px 700px at 50% 90%, rgba(255,255,255,.06), transparent 60%),
+        linear-gradient(160deg, var(--bg1), var(--bg2));
+      overflow-x:hidden;
+    }
+
+    .wrap{
+      min-height:100%;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      padding:28px 16px 50px;
+      gap:18px;
+    }
+
+    header{
+      width:min(980px, 100%);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:14px 16px;
+      border:1px solid var(--stroke);
+      background: rgba(255,255,255,.05);
+      backdrop-filter: blur(10px);
+      border-radius: 999px;
+      box-shadow: 0 8px 30px rgba(0,0,0,.22);
+    }
+    .brand{display:flex; align-items:center; gap:10px; font-weight:800;}
+    .dot{
+      width:12px;height:12px;border-radius:50%;
+      background: radial-gradient(circle at 30% 30%, #fff, rgba(255,255,255,.2) 35%, transparent 60%),
+                  linear-gradient(135deg, var(--accent1), var(--accent2));
+      box-shadow: 0 0 18px rgba(255,94,168,.35);
+    }
+    .mini{color:var(--muted);font-size:13px;line-height:1.2}
+
+    a.btn, button.btn{
+      border:1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      padding:10px 12px;border-radius:999px;
+      font-weight:800;
+      text-decoration:none;
+      display:inline-flex;align-items:center;gap:10px;
+      cursor:pointer;
+      transition: transform .12s ease, filter .12s ease;
+    }
+    a.btn:active, button.btn:active{transform: translateY(1px) scale(.99)}
+    .primary{
+      border:0;
+      background: linear-gradient(135deg, var(--accent1), var(--accent2));
+      box-shadow: 0 12px 28px rgba(138,92,255,.18);
+    }
+
+    .card{
+      width:min(980px, 100%);
+      border:1px solid var(--stroke);
+      background: var(--card);
+      backdrop-filter: blur(12px);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+
+    .player{
+      padding:16px;
+      display:flex;
+      justify-content:center;
+    }
+
+    /* ✅ IG STORY STAGE */
+    .stage{
+      width: min(420px, 100%);     /* story-ish */
+      aspect-ratio: 9 / 16;        /* ✅ story */
+      max-height: 78vh;            /* biar ga kepanjangan di desktop */
+      border-radius: 26px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.20);
+      position:relative;
+      transform: translateY(8px);
+      opacity:0;
+      transition: opacity .55s ease, transform .55s ease;
+      isolation:isolate;
+    }
+    .stage.show{opacity:1; transform: translateY(0)}
+
+    video, iframe{
+      width:100%;
+      height:100%;
+      display:block;
+      background:#000;
+      position:relative;
+      z-index:1;
+      object-fit: cover;           /* ✅ kayak story */
+    }
+
+    /* LOVE overlay */
+    .loveLayer{
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      z-index:2;
+      opacity:0;
+      transition: opacity .25s ease;
+    }
+    .stage.loving .loveLayer{opacity:1}
+
+    .tinyLove{
+      position:absolute;
+      width:10px; height:10px;
+      transform: rotate(45deg);
+      background: linear-gradient(135deg, rgba(255,94,168,.95), rgba(138,92,255,.95));
+      opacity:0;
+      filter: drop-shadow(0 6px 12px rgba(0,0,0,.28));
+      animation: loveRise 2.6s ease-in-out infinite;
+      border-radius: 2px;
+    }
+    .tinyLove::before,.tinyLove::after{
+      content:"";
+      position:absolute;
+      width:10px; height:10px;
+      border-radius:50%;
+      background: inherit;
+    }
+    .tinyLove::before{left:-5px; top:0}
+    .tinyLove::after{left:0; top:-5px}
+
+    @keyframes loveRise{
+      0%{ transform: translateY(18px) rotate(45deg) scale(.9); opacity:0 }
+      18%{ opacity:.55 }
+      55%{ transform: translateY(-18px) rotate(45deg) scale(1.08); opacity:.65 }
+      85%{ opacity:.20 }
+      100%{ transform: translateY(18px) rotate(45deg) scale(.92); opacity:0 }
+    }
+
+    .bar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+      padding: 14px 18px 18px;
+      border-top:1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.03);
+    }
+    .left{
+      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+    }
+    .right{
+      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .badge{
+      font-size:12px;
+      color: rgba(255,255,255,.80);
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.12);
+      padding:6px 10px;
+      border-radius:999px;
+    }
+    .muted{color:var(--muted);font-size:13px}
+
+    footer{
+      width:min(980px, 100%);
+      color: rgba(255,255,255,.55);
+      font-size:12px;
+      text-align:center;
+      margin-top:auto;
+      padding-top:8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <span class="dot"></span>
+        <div>
+          <div>Video buat kamu 🎬</div>
+          <div class="mini" id="hint"></div>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end">
+        <a class="btn" href="index.html">← Balik</a>
+      </div>
+    </header>
+
+    <section class="card">
+      <div class="player">
+        <div class="stage" id="stage" aria-label="Video stage">
+          <div class="loveLayer" id="loveLayer"></div>
+        </div>
+      </div>
+
+      <div class="bar">
+        <div class="left">
+          <span class="badge" id="loveBadge">Love: ON</span>
+          <span class="muted" id="autoInfo">Auto balik: —</span>
+        </div>
+        <div class="right">
+          <button class="btn" id="toggleLove">Love: ON 💗</button>
+          <button class="btn" id="toggleAuto">Auto balik: ON</button>
+          <button class="btn primary" id="backNow">Balik sekarang ↩</button>
+        </div>
+      </div>
+    </section>
+
+    <footer>Made with love 💗 @rahmadyxz</footer>
+  </div>
+
+  <script>
+    /** ===== EDIT INI ===== */
+    const CONFIG = {
+      // ✅ Catbox direct link (story video)
+      videoUrl: "https://files.catbox.moe/l3icc4.mp4",
+
+      // (Kalau nanti pake iframe provider lain, ini dipakai)
+      autoBackSecForIframe: 70,
+
+      // Defaults
+      autoBackOn: true,
+      loveOn: true,
+
+      // Autoplay behavior (coba suara dulu, kalau keblok -> fallback muted)
+      autoplayTrySound: true,
+
+      // Love density
+      loveCount: 16
+    };
+    /** ==================== */
+
+    const stage = document.getElementById("stage");
+    const loveLayer = document.getElementById("loveLayer");
+    const modeBadge = document.getElementById("modeBadge");
+    const loveBadge = document.getElementById("loveBadge");
+    const autoInfo = document.getElementById("autoInfo");
+    const toggleAuto = document.getElementById("toggleAuto");
+    const toggleLove = document.getElementById("toggleLove");
+    const backNow = document.getElementById("backNow");
+    const hint = document.getElementById("hint");
+
+    let autoOn = !!CONFIG.autoBackOn;
+    let loveOn = !!CONFIG.loveOn;
+    let autoTimer = null;
+
+    function goBack(){
+      if (history.length > 1) history.back();
+      else location.href = "index.html";
+    }
+    backNow.addEventListener("click", goBack);
+
+    function setAutoUI(){
+      toggleAuto.textContent = "Auto balik: " + (autoOn ? "ON" : "OFF");
+    }
+    function setLoveUI(){
+      toggleLove.textContent = "Love: " + (loveOn ? "ON 💗" : "OFF");
+      loveBadge.textContent = "Love: " + (loveOn ? "ON" : "OFF");
+      stage.classList.toggle("loving", loveOn);
+    }
+    setAutoUI();
+    setLoveUI();
+
+    toggleAuto.addEventListener("click", () => {
+      autoOn = !autoOn;
+      setAutoUI();
+      if(!autoOn) clearAutoTimer();
+      else setupAutoIfNeeded();
+    });
+
+    toggleLove.addEventListener("click", () => {
+      loveOn = !loveOn;
+      setLoveUI();
+      if(loveOn) buildLove(); else loveLayer.innerHTML = "";
+    });
+
+    function clearAutoTimer(){
+      if(autoTimer) clearTimeout(autoTimer);
+      autoTimer = null;
+      autoInfo.textContent = "Auto balik: " + (autoOn ? "ON" : "OFF");
+    }
+    function setupAutoTimer(sec){
+      clearAutoTimer();
+      if(!autoOn) return;
+      autoInfo.textContent = "Auto balik: ~" + sec + "s";
+      autoTimer = setTimeout(() => {
+        if(autoOn) goBack();
+      }, sec * 1000);
+    }
+
+    // ===== Love builder =====
+    function buildLove(){
+      loveLayer.innerHTML = "";
+      const n = Math.max(6, Math.min(40, CONFIG.loveCount || 16));
+      for(let i=0;i<n;i++){
+        const h = document.createElement("div");
+        h.className = "tinyLove";
+        const x = 6 + Math.random()*88;
+        const y = 10 + Math.random()*75;
+        const d = 2.0 + Math.random()*2.4;
+        const delay = Math.random()*1.2;
+        const size = 8 + Math.random()*10;
+        h.style.left = x + "%";
+        h.style.top = y + "%";
+        h.style.width = size + "px";
+        h.style.height = size + "px";
+        h.style.animationDuration = d + "s";
+        h.style.animationDelay = delay + "s";
+        loveLayer.appendChild(h);
+      }
+    }
+    if(loveOn) buildLove();
+
+    // ===== Helpers =====
+    function isLikelyDirectVideo(url){
+      return /\.(mp4|webm|ogg|mov|m4v)(\?|#|$)/i.test(url);
+    }
+
+    function guessMime(url){
+      const u = url.toLowerCase();
+      if(u.endsWith(".webm")) return "video/webm";
+      if(u.endsWith(".ogg"))  return "video/ogg";
+      if(u.endsWith(".mov"))  return "video/quicktime";
+      if(u.endsWith(".m4v"))  return "video/x-m4v";
+      return "video/mp4";
+    }
+
+    // ===== Render player =====
+    const rawUrl = (CONFIG.videoUrl || "").trim();
+
+    if(!rawUrl){
+      stage.insertAdjacentHTML("beforeend",
+        "<div style='position:absolute;inset:0;display:grid;place-items:center;padding:18px;color:rgba(255,255,255,.78);z-index:3'>" +
+        "<div style='text-align:center'>Isi dulu <b>CONFIG.videoUrl</b> ya.</div></div>"
+      );
+      modeBadge.textContent = "Mode: —";
+      autoInfo.textContent = "Auto balik: —";
+      stage.classList.add("show");
+    } else {
+      const useVideoTag = isLikelyDirectVideo(rawUrl);
+
+      if(useVideoTag){
+        autoInfo.textContent = "Auto balik: " + (autoOn ? "ON" : "OFF");
+
+        const v = document.createElement("video");
+        v.setAttribute("playsinline", "");  // penting di iOS
+        v.setAttribute("controls", "");
+        v.setAttribute("preload", "auto");
+        v.autoplay = true;
+
+        // coba suara dulu, kalau keblok fallback muted
+        v.muted = !CONFIG.autoplayTrySound;
+
+        const source = document.createElement("source");
+        source.src = rawUrl;
+        source.type = guessMime(rawUrl);
+        v.appendChild(source);
+
+        stage.appendChild(v);
+        requestAnimationFrame(()=> stage.classList.add("show"));
+
+        (async () => {
+          try{
+            await v.play();
+          }catch(e){
+            try{
+              v.muted = true;
+              await v.play();
+              hint.textContent = "";
+            }catch(_){
+              hint.textContent = "";
+            }
+          }
+        })();
+
+        v.addEventListener("ended", () => {
+          if(autoOn) goBack();
+        });
+
+        window.setupAutoIfNeeded = () => {
+          autoInfo.textContent = "Auto balik: " + (autoOn ? "ON" : "OFF");
+        };
+        window.setupAutoIfNeeded();
+
+      } else {
+        // fallback iframe mode (kalau suatu saat pakai provider yang bukan direct)
+        modeBadge.textContent = "Mode: iframe";
+        const iframe = document.createElement("iframe");
+        iframe.src = rawUrl;
+        iframe.allow = "autoplay; fullscreen";
+        iframe.allowFullscreen = true;
+
+        stage.appendChild(iframe);
+        requestAnimationFrame(()=> stage.classList.add("show"));
+
+        window.setupAutoIfNeeded = () => {
+          if(autoOn) setupAutoTimer(CONFIG.autoBackSecForIframe || 60);
+          else clearAutoTimer();
+        };
+        window.setupAutoIfNeeded();
+
+        hint.textContent = "Link ini bukan direct video. Auto balik pakai timer.";
+      }
+    }
+
+    function setupAutoIfNeeded(){
+      if(window.setupAutoIfNeeded) window.setupAutoIfNeeded();
+    }
+  </script>
+</body>
+</html>
