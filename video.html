@@ -386,266 +386,320 @@
     if(loveOn) buildLove();
 
     // =========================
-    // 🔥 FIREWORKS “GOKIL MODE”
-    // - rocket trail (naik)
-    // - multi-burst (1–2 burst)
-    // - rainbow particles + glitter + twinkle
-    // =========================
-    let dpr = Math.max(1, window.devicePixelRatio || 1);
-    let W = 0, H = 0;
+// 🔥 FIREWORKS (Mobile Friendly)
+// - Adaptive quality (mobile / low FPS)
+// - Lower DPR on mobile
+// - Shadow/glow off on mobile to avoid stutter
+// =========================
+let dpr = 1;
+let W = 0, H = 0;
 
-    let rockets = [];
-    let particles = [];
-    let sparkles = [];
-    let fwRAF = null;
-    let rocketTimer = null;
+let rockets = [];
+let particles = [];
+let sparkles = [];
+let fwRAF = null;
+let rocketTimer = null;
 
-    function rand(a,b){ return a + Math.random()*(b-a); }
-    function clamp(n,a,b){ return Math.max(a, Math.min(b, n)); }
+// Quality preset (auto)
+const Q = {
+  mobile: /Android|iPhone|iPad|iPod/i.test(navigator.userAgent),
+  dprCap: 1.35,          // canvas DPR cap (mobile)
+  glow: true,            // shadow blur glow
+  maxParticles: 520,
+  maxSparkles: 220,
+  rocketRate: CONFIG.rocketRate || 520,
+  burstCount: CONFIG.burstCount || [44, 86],
+  burstSpeed: CONFIG.burstSpeed || [2.2, 4.2],
+};
 
-    function resizeCanvas(){
-      dpr = Math.max(1, window.devicePixelRatio || 1);
-      W = fwCanvas.clientWidth;
-      H = fwCanvas.clientHeight;
-      fwCanvas.width = Math.floor(W * dpr);
-      fwCanvas.height = Math.floor(H * dpr);
-      ctx.setTransform(dpr,0,0,dpr,0,0);
+function rand(a,b){ return a + Math.random()*(b-a); }
+function clamp(n,a,b){ return Math.max(a, Math.min(b, n)); }
+
+function applyQuality(){
+  // On mobile: reduce everything
+  if(Q.mobile){
+    Q.dprCap = 1.0;
+    Q.glow = false;
+    Q.maxParticles = 260;
+    Q.maxSparkles = 120;
+    Q.rocketRate = Math.max(700, Q.rocketRate); // less frequent
+    Q.burstCount = [26, 48];
+    Q.burstSpeed = [1.8, 3.2];
+  }
+}
+applyQuality();
+
+function resizeCanvas(){
+  const rawDpr = Math.max(1, window.devicePixelRatio || 1);
+  dpr = Math.min(rawDpr, Q.dprCap);  // ✅ DPR capped
+  W = fwCanvas.clientWidth;
+  H = fwCanvas.clientHeight;
+
+  fwCanvas.width = Math.floor(W * dpr);
+  fwCanvas.height = Math.floor(H * dpr);
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+}
+window.addEventListener("resize", resizeCanvas);
+
+function randColor(){
+  const h = Math.floor(rand(0, 360));
+  const s = Math.floor(rand(75, 98));
+  const l = Math.floor(rand(52, 72));
+  return `hsl(${h} ${s}% ${l}%)`;
+}
+
+function drawDot(x,y,r,color,alpha){
+  ctx.globalAlpha = alpha;
+  ctx.fillStyle = color;
+
+  // glow itu mahal di mobile → disable
+  if(Q.glow){
+    ctx.shadowBlur = 12;
+    ctx.shadowColor = color;
+  }else{
+    ctx.shadowBlur = 0;
+  }
+
+  ctx.beginPath();
+  ctx.arc(x,y,r,0,Math.PI*2);
+  ctx.fill();
+  ctx.shadowBlur = 0;
+}
+
+// small shake, but only desktop (mobile can stutter)
+function stageShake(){
+  if(Q.mobile) return;
+  if(!CONFIG.shakeOnBurst) return;
+  stage.animate([
+    { transform: 'translateY(0) rotate(0deg)' },
+    { transform: `translate(${rand(-2,2)}px, ${rand(-2,2)}px) rotate(${rand(-0.25,0.25)}deg)` },
+    { transform: 'translateY(0) rotate(0deg)' }
+  ], { duration: 220, easing: 'ease-out' });
+}
+
+function spawnRocket(){
+  const x = rand(W*0.14, W*0.86);
+  const y = H + rand(10, 40);
+
+  const tx = clamp(x + rand(-W*0.18, W*0.18), W*0.12, W*0.88);
+  const ty = rand(H*0.16, H*0.52);
+
+  const dx = tx - x;
+  const dy = ty - y;
+  const dist = Math.max(180, Math.hypot(dx, dy));
+  const speed = Q.mobile ? rand(5.2, 7.2) : rand(6.0, 8.6);
+
+  rockets.push({
+    x, y,
+    vx: (dx/dist) * speed,
+    vy: (dy/dist) * speed,
+    tx, ty,
+    life: Math.floor(dist / speed),
+    color: randColor(),
+    trail: []
+  });
+}
+
+function burst(x,y, baseColor){
+  stageShake();
+
+  // hard cap to prevent particle explosion
+  if(particles.length > Q.maxParticles) particles.splice(0, particles.length - Q.maxParticles);
+  if(sparkles.length > Q.maxSparkles) sparkles.splice(0, sparkles.length - Q.maxSparkles);
+
+  const bMin = Q.burstCount[0];
+  const bMax = Q.burstCount[1];
+  const count = Math.floor(rand(bMin, bMax));
+
+  const sMin = Q.burstSpeed[0];
+  const sMax = Q.burstSpeed[1];
+  const speed = rand(sMin, sMax);
+
+  const glitterChance = Q.mobile ? 0.20 : (CONFIG.glitterChance ?? 0.55);
+  const twinkleChance = Q.mobile ? 0.25 : (CONFIG.twinkleChance ?? 0.55);
+
+  for(let i=0;i<count;i++){
+    const ang = rand(0, Math.PI*2);
+    const sp = speed * rand(0.55, 1.25);
+    const c = (Math.random() < 0.35) ? randColor() : baseColor;
+
+    particles.push({
+      x, y,
+      vx: Math.cos(ang) * sp,
+      vy: Math.sin(ang) * sp,
+      g: 0.06,
+      drag: rand(0.985, 0.992),
+      life: Math.floor(rand(44, 78)),
+      maxLife: 78,
+      size: rand(1.1, Q.mobile ? 2.1 : 2.8),
+      color: c,
+      twinkle: Math.random() < twinkleChance,
+      glitter: Math.random() < glitterChance,
+      phase: rand(0, Math.PI*2)
+    });
+  }
+
+  // fewer ring sparkles on mobile
+  const ringCount = Math.floor(rand(Q.mobile ? 8 : 12, Q.mobile ? 12 : 18));
+  for(let k=0;k<ringCount;k++){
+    const ang = (Math.PI*2) * (k / ringCount);
+    sparkles.push({
+      x, y,
+      vx: Math.cos(ang) * rand(0.9, 1.8),
+      vy: Math.sin(ang) * rand(0.9, 1.8),
+      life: Math.floor(rand(14, Q.mobile ? 22 : 28)),
+      color: randColor(),
+      r: rand(0.9, 1.6)
+    });
+  }
+}
+
+function fwStart(){
+  resizeCanvas();
+  setFWUI();
+
+  spawnRocket();
+  if(!Q.mobile) spawnRocket();
+
+  const rate = Math.max(Q.mobile ? 820 : 260, Q.rocketRate);
+  if(rocketTimer) clearInterval(rocketTimer);
+  rocketTimer = setInterval(() => {
+    if(!fwOn) return;
+    spawnRocket();
+  }, rate);
+
+  if(!fwRAF) fwRAF = requestAnimationFrame(loop);
+}
+
+function fwStop(){
+  if(rocketTimer) clearInterval(rocketTimer);
+  rocketTimer = null;
+
+  if(fwRAF) cancelAnimationFrame(fwRAF);
+  fwRAF = null;
+
+  rockets = [];
+  particles = [];
+  sparkles = [];
+  ctx.clearRect(0,0,W,H);
+  setFWUI();
+}
+
+// FPS adaptive: if low fps, reduce quality dynamically
+let lastT = 0;
+let slowCount = 0;
+
+function loop(t){
+  // background fade (less alpha = more trails but more work)
+  ctx.globalAlpha = Q.mobile ? 0.28 : 0.18;
+  ctx.fillStyle = "rgba(0,0,0,1)";
+  ctx.fillRect(0,0,W,H);
+
+  // FPS check
+  if(lastT){
+    const dt = t - lastT;
+    if(dt > 28) slowCount++; else slowCount = Math.max(0, slowCount - 1);
+
+    // if consistently slow, degrade more
+    if(slowCount > 10 && !Q.mobile){
+      Q.glow = false;
+      Q.maxParticles = 320;
+      Q.maxSparkles = 140;
+      Q.burstCount = [28, 54];
+      slowCount = 0;
     }
-    window.addEventListener("resize", resizeCanvas);
+  }
+  lastT = t;
 
-    function randColor(){
-      const h = Math.floor(rand(0, 360));
-      const s = Math.floor(rand(75, 98));
-      const l = Math.floor(rand(52, 72));
-      return `hsl(${h} ${s}% ${l}%)`;
+  // rockets
+  for(const r of rockets){
+    r.x += r.vx;
+    r.y += r.vy;
+    r.life -= 1;
+
+    r.trail.push({x:r.x, y:r.y});
+    const trailMax = Q.mobile ? 10 : 16;
+    if(r.trail.length > trailMax) r.trail.shift();
+
+    for(let i=0;i<r.trail.length;i++){
+      const tt = r.trail[i];
+      const a = i / r.trail.length;
+      drawDot(tt.x, tt.y, 1.0 + a*1.1, r.color, a*(Q.mobile ? 0.55 : 0.75));
+    }
+    drawDot(r.x, r.y, Q.mobile ? 1.9 : 2.4, r.color, 0.9);
+
+    const near = Math.hypot(r.x - r.tx, r.y - r.ty) < (Q.mobile ? 12 : 10);
+    if(r.life <= 0 || near){
+      const bMin = (CONFIG.burstsPerRocket && CONFIG.burstsPerRocket[0]) || 1;
+      const bMax = (CONFIG.burstsPerRocket && CONFIG.burstsPerRocket[1]) || 2;
+      const times = Q.mobile ? 1 : Math.floor(rand(bMin, bMax+1));
+
+      for(let k=0;k<times;k++){
+        const ox = rand(-14, 14);
+        const oy = rand(-10, 10);
+        burst(r.x + ox, r.y + oy, r.color);
+      }
+      r.dead = true;
+    }
+  }
+  rockets = rockets.filter(r => !r.dead);
+
+  // particles
+  for(const p of particles){
+    p.x += p.vx;
+    p.y += p.vy;
+
+    p.vx *= p.drag;
+    p.vy *= p.drag;
+    p.vy += p.g;
+
+    p.life -= 1;
+    const lifeN = clamp(p.life / p.maxLife, 0, 1);
+
+    let alpha = Math.pow(lifeN, 0.65);
+    if(p.twinkle){
+      alpha *= (0.65 + 0.35*Math.sin(p.phase + (p.maxLife - p.life)*0.28));
     }
 
-    function stageShake(){
-      if(!CONFIG.shakeOnBurst) return;
-      stage.animate([
-        { transform: 'translateY(0) rotate(0deg)' },
-        { transform: `translate(${rand(-2,2)}px, ${rand(-2,2)}px) rotate(${rand(-0.25,0.25)}deg)` },
-        { transform: 'translateY(0) rotate(0deg)' }
-      ], { duration: 220, easing: 'ease-out' });
-    }
+    const rr = p.size * (1.0 + (1-lifeN)*0.14);
+    drawDot(p.x, p.y, rr, p.color, alpha);
 
-    function spawnRocket(){
-      const x = rand(W*0.14, W*0.86);
-      const y = H + rand(10, 40);
-
-      // target meledak
-      const tx = clamp(x + rand(-W*0.18, W*0.18), W*0.12, W*0.88);
-      const ty = rand(H*0.16, H*0.52);
-
-      const dx = tx - x;
-      const dy = ty - y;
-      const dist = Math.max(180, Math.hypot(dx, dy));
-      const speed = rand(6.0, 8.6);
-
-      rockets.push({
-        x, y,
-        vx: (dx/dist) * speed,
-        vy: (dy/dist) * speed,
-        tx, ty,
-        life: Math.floor(dist / speed),
-        color: randColor(),
-        trail: []
+    // glitter, reduced on mobile
+    if(p.glitter && Math.random() < (Q.mobile ? 0.10 : 0.22)){
+      sparkles.push({
+        x: p.x + rand(-2,2),
+        y: p.y + rand(-2,2),
+        vx: rand(-0.5,0.5),
+        vy: rand(-0.5,0.5),
+        life: Math.floor(rand(8, Q.mobile ? 14 : 18)),
+        color: (Math.random()<0.5) ? "#fff" : randColor(),
+        r: rand(0.8, 1.2)
       });
     }
+  }
+  particles = particles.filter(p => p.life > 0 && p.y < H + 60);
 
-    function burst(x,y, baseColor){
-      stageShake();
+  // sparkles
+  for(const s of sparkles){
+    s.x += s.vx;
+    s.y += s.vy;
+    s.vx *= 0.98;
+    s.vy *= 0.98;
+    s.life -= 1;
+    drawDot(s.x, s.y, s.r, s.color, Math.max(s.life/22,0));
+  }
+  sparkles = sparkles.filter(s => s.life > 0);
 
-      const bMin = (CONFIG.burstCount && CONFIG.burstCount[0]) || 44;
-      const bMax = (CONFIG.burstCount && CONFIG.burstCount[1]) || 86;
-      const count = Math.floor(rand(bMin, bMax));
+  if(fwOn){
+    fwRAF = requestAnimationFrame(loop);
+  }else{
+    ctx.clearRect(0,0,W,H);
+    fwRAF = null;
+  }
+}
 
-      const sMin = (CONFIG.burstSpeed && CONFIG.burstSpeed[0]) || 2.2;
-      const sMax = (CONFIG.burstSpeed && CONFIG.burstSpeed[1]) || 4.2;
-      const speed = rand(sMin, sMax);
+if(fwOn) fwStart();
 
-      for(let i=0;i<count;i++){
-        const ang = rand(0, Math.PI*2);
-        const sp = speed * rand(0.55, 1.25);
-        const c = (Math.random() < 0.38) ? randColor() : baseColor;
-
-        const twinkle = Math.random() < (CONFIG.twinkleChance ?? 0.55);
-        const glitter = Math.random() < (CONFIG.glitterChance ?? 0.55);
-
-        particles.push({
-          x, y,
-          vx: Math.cos(ang) * sp,
-          vy: Math.sin(ang) * sp,
-          g: 0.06,
-          drag: rand(0.985, 0.992),
-          life: Math.floor(rand(52, 92)),
-          maxLife: 92,
-          size: rand(1.2, 2.9),
-          color: c,
-          twinkle,
-          glitter,
-          phase: rand(0, Math.PI*2)
-        });
-      }
-
-      // ring sparkle (glow circle)
-      const ringCount = Math.floor(rand(14, 22));
-      for(let k=0;k<ringCount;k++){
-        const ang = (Math.PI*2) * (k / ringCount);
-        sparkles.push({
-          x, y,
-          vx: Math.cos(ang) * rand(1.2, 2.2),
-          vy: Math.sin(ang) * rand(1.2, 2.2),
-          life: Math.floor(rand(18, 30)),
-          color: randColor(),
-          r: rand(1.2, 2.0)
-        });
-      }
-    }
-
-    function fwStart(){
-      resizeCanvas();
-      setFWUI();
-
-      // intro double burst
-      spawnRocket();
-      spawnRocket();
-
-      const rate = Math.max(240, CONFIG.rocketRate || 520);
-      if(rocketTimer) clearInterval(rocketTimer);
-      rocketTimer = setInterval(() => {
-        if(!fwOn) return;
-        spawnRocket();
-      }, rate);
-
-      if(!fwRAF) fwRAF = requestAnimationFrame(loop);
-    }
-
-    function fwStop(){
-      if(rocketTimer) clearInterval(rocketTimer);
-      rocketTimer = null;
-      if(fwRAF) cancelAnimationFrame(fwRAF);
-      fwRAF = null;
-
-      rockets = [];
-      particles = [];
-      sparkles = [];
-      ctx.clearRect(0,0,W,H);
-      setFWUI();
-    }
-
-    function drawGlowCircle(x,y,r,color,alpha){
-      ctx.globalAlpha = alpha;
-      ctx.fillStyle = color;
-      ctx.shadowBlur = 14;
-      ctx.shadowColor = color;
-      ctx.beginPath();
-      ctx.arc(x,y,r,0,Math.PI*2);
-      ctx.fill();
-      ctx.shadowBlur = 0;
-    }
-
-    function loop(){
-      // slight fade instead of hard clear -> “trail” cinematic
-      ctx.globalAlpha = 0.18;
-      ctx.fillStyle = "rgba(0,0,0,1)";
-      ctx.fillRect(0,0,W,H);
-
-      // rockets
-      for(const r of rockets){
-        r.x += r.vx;
-        r.y += r.vy;
-        r.life -= 1;
-
-        // trail points
-        r.trail.push({x:r.x, y:r.y});
-        if(r.trail.length > 16) r.trail.shift();
-
-        // draw trail
-        for(let i=0;i<r.trail.length;i++){
-          const t = r.trail[i];
-          const a = i / r.trail.length;
-          drawGlowCircle(t.x, t.y, 1.1 + a*1.2, r.color, a*0.75);
-        }
-
-        // head
-        drawGlowCircle(r.x, r.y, 2.4, r.color, 0.9);
-
-        // explode near target or end
-        const near = Math.hypot(r.x - r.tx, r.y - r.ty) < 10;
-        if(r.life <= 0 || near){
-          // multi burst (1-2 burst)
-          const bMin = (CONFIG.burstsPerRocket && CONFIG.burstsPerRocket[0]) || 1;
-          const bMax = (CONFIG.burstsPerRocket && CONFIG.burstsPerRocket[1]) || 2;
-          const times = Math.floor(rand(bMin, bMax+1));
-
-          for(let k=0;k<times;k++){
-            const ox = rand(-18, 18);
-            const oy = rand(-12, 12);
-            burst(r.x + ox, r.y + oy, r.color);
-          }
-
-          r.dead = true;
-        }
-      }
-      rockets = rockets.filter(r => !r.dead);
-
-      // particles
-      for(const p of particles){
-        p.x += p.vx;
-        p.y += p.vy;
-
-        p.vx *= p.drag;
-        p.vy *= p.drag;
-        p.vy += p.g;
-
-        p.life -= 1;
-        const lifeN = clamp(p.life / p.maxLife, 0, 1);
-
-        let alpha = Math.pow(lifeN, 0.65);
-        if(p.twinkle){
-          alpha *= (0.55 + 0.45*Math.sin(p.phase + (p.maxLife - p.life)*0.28));
-        }
-
-        // main
-        const r = p.size * (1.0 + (1-lifeN)*0.18);
-        drawGlowCircle(p.x, p.y, r, p.color, alpha);
-
-        // glitter micro sparks
-        if(p.glitter && Math.random() < 0.22){
-          sparkles.push({
-            x: p.x + rand(-2,2),
-            y: p.y + rand(-2,2),
-            vx: rand(-0.6,0.6),
-            vy: rand(-0.6,0.6),
-            life: Math.floor(rand(10, 18)),
-            color: (Math.random()<0.5) ? "#fff" : randColor(),
-            r: rand(0.8, 1.4)
-          });
-        }
-      }
-      particles = particles.filter(p => p.life > 0 && p.y < H + 60);
-
-      // sparkles
-      for(const s of sparkles){
-        s.x += s.vx;
-        s.y += s.vy;
-        s.vx *= 0.98;
-        s.vy *= 0.98;
-        s.life -= 1;
-        drawGlowCircle(s.x, s.y, s.r, s.color, Math.max(s.life/24,0));
-      }
-      sparkles = sparkles.filter(s => s.life > 0);
-
-      if(fwOn){
-        fwRAF = requestAnimationFrame(loop);
-      } else {
-        ctx.clearRect(0,0,W,H);
-        fwRAF = null;
-      }
-    }
-
-    if(fwOn) fwStart();
 
     // ===== YouTube embed =====
     function extractYouTubeId(url){
@@ -692,3 +746,4 @@
   </script>
 </body>
 </html>
+
