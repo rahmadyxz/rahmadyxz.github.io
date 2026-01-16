@@ -152,6 +152,20 @@
       100%{ transform: translateY(18px) rotate(45deg) scale(.92); opacity:0 }
     }
 
+    /* ✅ FIREWORKS overlay (canvas) */
+    .fwCanvas{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      z-index:4;
+      pointer-events:none;
+      opacity:0;
+      transition: opacity .25s ease;
+      mix-blend-mode: screen;
+    }
+    .stage.fireworksOn .fwCanvas{opacity:1}
+
     /* fallback overlay */
     .fallback{
       position:absolute; inset:0;
@@ -217,6 +231,7 @@
       <div class="player">
         <div class="stage" id="stage" aria-label="Video stage">
           <div class="loveLayer" id="loveLayer"></div>
+          <canvas class="fwCanvas" id="fwCanvas"></canvas>
 
           <div class="fallback" id="fallback">
             <div>
@@ -234,9 +249,12 @@
       <div class="bar">
         <div class="left">
           <span class="badge" id="loveBadge">Love: ON</span>
+          <span class="badge" id="fwBadge">FW: ON</span>
+          <span class="muted" id="autoInfo">Auto balik: —</span>
         </div>
         <div class="right">
           <button class="btn" id="toggleLove">Love: ON 💗</button>
+          <button class="btn" id="toggleFW">Fireworks: ON 🎆</button>
           <button class="btn" id="toggleAuto">Auto balik: ON</button>
           <button class="btn primary" id="backNow">Balik sekarang ↩</button>
         </div>
@@ -249,24 +267,43 @@
   <script>
     const CONFIG = {
       shortsUrl: "https://www.youtube.com/shorts/JtlnMtZ8m7I",
+
+      // ✅ auto balik sesuai durasi video (27s) -> balik 28s
       autoBackSec: 28,
       autoBackOn: true,
+
+      // overlays
       loveOn: true,
-      loveCount: 16
+      loveCount: 16,
+
+      fireworksOn: true,     // default ON
+      // “gokil mode” tuning
+      rocketRate: 520,       // ms: seberapa sering roket naik (makin kecil makin rame)
+      burstsPerRocket: [1,2],// random jumlah burst per roket
+      burstCount: [44, 86],  // jumlah partikel meledak
+      burstSpeed: [2.2, 4.2],
+      glitterChance: 0.55,   // chance glitter particles
+      twinkleChance: 0.55,   // chance twinkle pulse
+      shakeOnBurst: true     // stage shake dikit pas ledak
     };
 
     const stage = document.getElementById("stage");
     const loveLayer = document.getElementById("loveLayer");
     const loveBadge = document.getElementById("loveBadge");
+    const fwBadge = document.getElementById("fwBadge");
     const autoInfo = document.getElementById("autoInfo");
     const toggleAuto = document.getElementById("toggleAuto");
     const toggleLove = document.getElementById("toggleLove");
+    const toggleFW = document.getElementById("toggleFW");
     const backNow = document.getElementById("backNow");
     const fallback = document.getElementById("fallback");
     const openYT = document.getElementById("openYT");
+    const fwCanvas = document.getElementById("fwCanvas");
+    const ctx = fwCanvas.getContext("2d");
 
     let autoOn = !!CONFIG.autoBackOn;
     let loveOn = !!CONFIG.loveOn;
+    let fwOn = !!CONFIG.fireworksOn;
     let autoTimer = null;
 
     function goBack(){
@@ -277,14 +314,22 @@
 
     function setAutoUI(){
       toggleAuto.textContent = "Auto balik: " + (autoOn ? "ON" : "OFF");
+      autoInfo.textContent = "Auto balik: " + (autoOn ? "~" + (CONFIG.autoBackSec || 28) + "s" : "OFF");
     }
     function setLoveUI(){
       toggleLove.textContent = "Love: " + (loveOn ? "ON 💗" : "OFF");
       loveBadge.textContent = "Love: " + (loveOn ? "ON" : "OFF");
       stage.classList.toggle("loving", loveOn);
     }
+    function setFWUI(){
+      toggleFW.textContent = "Fireworks: " + (fwOn ? "ON 🎆" : "OFF 🎆");
+      fwBadge.textContent = "FW: " + (fwOn ? "ON" : "OFF");
+      stage.classList.toggle("fireworksOn", fwOn);
+    }
+
     setAutoUI();
     setLoveUI();
+    setFWUI();
 
     toggleAuto.addEventListener("click", () => {
       autoOn = !autoOn;
@@ -299,6 +344,12 @@
       if(loveOn) buildLove(); else loveLayer.innerHTML = "";
     });
 
+    toggleFW.addEventListener("click", () => {
+      fwOn = !fwOn;
+      setFWUI();
+      if(fwOn) fwStart(); else fwStop();
+    });
+
     function clearAutoTimer(){
       if(autoTimer) clearTimeout(autoTimer);
       autoTimer = null;
@@ -311,6 +362,7 @@
       }, sec * 1000);
     }
 
+    // ===== Love builder =====
     function buildLove(){
       loveLayer.innerHTML = "";
       const n = Math.max(6, Math.min(40, CONFIG.loveCount || 16));
@@ -333,6 +385,269 @@
     }
     if(loveOn) buildLove();
 
+    // =========================
+    // 🔥 FIREWORKS “GOKIL MODE”
+    // - rocket trail (naik)
+    // - multi-burst (1–2 burst)
+    // - rainbow particles + glitter + twinkle
+    // =========================
+    let dpr = Math.max(1, window.devicePixelRatio || 1);
+    let W = 0, H = 0;
+
+    let rockets = [];
+    let particles = [];
+    let sparkles = [];
+    let fwRAF = null;
+    let rocketTimer = null;
+
+    function rand(a,b){ return a + Math.random()*(b-a); }
+    function clamp(n,a,b){ return Math.max(a, Math.min(b, n)); }
+
+    function resizeCanvas(){
+      dpr = Math.max(1, window.devicePixelRatio || 1);
+      W = fwCanvas.clientWidth;
+      H = fwCanvas.clientHeight;
+      fwCanvas.width = Math.floor(W * dpr);
+      fwCanvas.height = Math.floor(H * dpr);
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+    }
+    window.addEventListener("resize", resizeCanvas);
+
+    function randColor(){
+      const h = Math.floor(rand(0, 360));
+      const s = Math.floor(rand(75, 98));
+      const l = Math.floor(rand(52, 72));
+      return `hsl(${h} ${s}% ${l}%)`;
+    }
+
+    function stageShake(){
+      if(!CONFIG.shakeOnBurst) return;
+      stage.animate([
+        { transform: 'translateY(0) rotate(0deg)' },
+        { transform: `translate(${rand(-2,2)}px, ${rand(-2,2)}px) rotate(${rand(-0.25,0.25)}deg)` },
+        { transform: 'translateY(0) rotate(0deg)' }
+      ], { duration: 220, easing: 'ease-out' });
+    }
+
+    function spawnRocket(){
+      const x = rand(W*0.14, W*0.86);
+      const y = H + rand(10, 40);
+
+      // target meledak
+      const tx = clamp(x + rand(-W*0.18, W*0.18), W*0.12, W*0.88);
+      const ty = rand(H*0.16, H*0.52);
+
+      const dx = tx - x;
+      const dy = ty - y;
+      const dist = Math.max(180, Math.hypot(dx, dy));
+      const speed = rand(6.0, 8.6);
+
+      rockets.push({
+        x, y,
+        vx: (dx/dist) * speed,
+        vy: (dy/dist) * speed,
+        tx, ty,
+        life: Math.floor(dist / speed),
+        color: randColor(),
+        trail: []
+      });
+    }
+
+    function burst(x,y, baseColor){
+      stageShake();
+
+      const bMin = (CONFIG.burstCount && CONFIG.burstCount[0]) || 44;
+      const bMax = (CONFIG.burstCount && CONFIG.burstCount[1]) || 86;
+      const count = Math.floor(rand(bMin, bMax));
+
+      const sMin = (CONFIG.burstSpeed && CONFIG.burstSpeed[0]) || 2.2;
+      const sMax = (CONFIG.burstSpeed && CONFIG.burstSpeed[1]) || 4.2;
+      const speed = rand(sMin, sMax);
+
+      for(let i=0;i<count;i++){
+        const ang = rand(0, Math.PI*2);
+        const sp = speed * rand(0.55, 1.25);
+        const c = (Math.random() < 0.38) ? randColor() : baseColor;
+
+        const twinkle = Math.random() < (CONFIG.twinkleChance ?? 0.55);
+        const glitter = Math.random() < (CONFIG.glitterChance ?? 0.55);
+
+        particles.push({
+          x, y,
+          vx: Math.cos(ang) * sp,
+          vy: Math.sin(ang) * sp,
+          g: 0.06,
+          drag: rand(0.985, 0.992),
+          life: Math.floor(rand(52, 92)),
+          maxLife: 92,
+          size: rand(1.2, 2.9),
+          color: c,
+          twinkle,
+          glitter,
+          phase: rand(0, Math.PI*2)
+        });
+      }
+
+      // ring sparkle (glow circle)
+      const ringCount = Math.floor(rand(14, 22));
+      for(let k=0;k<ringCount;k++){
+        const ang = (Math.PI*2) * (k / ringCount);
+        sparkles.push({
+          x, y,
+          vx: Math.cos(ang) * rand(1.2, 2.2),
+          vy: Math.sin(ang) * rand(1.2, 2.2),
+          life: Math.floor(rand(18, 30)),
+          color: randColor(),
+          r: rand(1.2, 2.0)
+        });
+      }
+    }
+
+    function fwStart(){
+      resizeCanvas();
+      setFWUI();
+
+      // intro double burst
+      spawnRocket();
+      spawnRocket();
+
+      const rate = Math.max(240, CONFIG.rocketRate || 520);
+      if(rocketTimer) clearInterval(rocketTimer);
+      rocketTimer = setInterval(() => {
+        if(!fwOn) return;
+        spawnRocket();
+      }, rate);
+
+      if(!fwRAF) fwRAF = requestAnimationFrame(loop);
+    }
+
+    function fwStop(){
+      if(rocketTimer) clearInterval(rocketTimer);
+      rocketTimer = null;
+      if(fwRAF) cancelAnimationFrame(fwRAF);
+      fwRAF = null;
+
+      rockets = [];
+      particles = [];
+      sparkles = [];
+      ctx.clearRect(0,0,W,H);
+      setFWUI();
+    }
+
+    function drawGlowCircle(x,y,r,color,alpha){
+      ctx.globalAlpha = alpha;
+      ctx.fillStyle = color;
+      ctx.shadowBlur = 14;
+      ctx.shadowColor = color;
+      ctx.beginPath();
+      ctx.arc(x,y,r,0,Math.PI*2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+
+    function loop(){
+      // slight fade instead of hard clear -> “trail” cinematic
+      ctx.globalAlpha = 0.18;
+      ctx.fillStyle = "rgba(0,0,0,1)";
+      ctx.fillRect(0,0,W,H);
+
+      // rockets
+      for(const r of rockets){
+        r.x += r.vx;
+        r.y += r.vy;
+        r.life -= 1;
+
+        // trail points
+        r.trail.push({x:r.x, y:r.y});
+        if(r.trail.length > 16) r.trail.shift();
+
+        // draw trail
+        for(let i=0;i<r.trail.length;i++){
+          const t = r.trail[i];
+          const a = i / r.trail.length;
+          drawGlowCircle(t.x, t.y, 1.1 + a*1.2, r.color, a*0.75);
+        }
+
+        // head
+        drawGlowCircle(r.x, r.y, 2.4, r.color, 0.9);
+
+        // explode near target or end
+        const near = Math.hypot(r.x - r.tx, r.y - r.ty) < 10;
+        if(r.life <= 0 || near){
+          // multi burst (1-2 burst)
+          const bMin = (CONFIG.burstsPerRocket && CONFIG.burstsPerRocket[0]) || 1;
+          const bMax = (CONFIG.burstsPerRocket && CONFIG.burstsPerRocket[1]) || 2;
+          const times = Math.floor(rand(bMin, bMax+1));
+
+          for(let k=0;k<times;k++){
+            const ox = rand(-18, 18);
+            const oy = rand(-12, 12);
+            burst(r.x + ox, r.y + oy, r.color);
+          }
+
+          r.dead = true;
+        }
+      }
+      rockets = rockets.filter(r => !r.dead);
+
+      // particles
+      for(const p of particles){
+        p.x += p.vx;
+        p.y += p.vy;
+
+        p.vx *= p.drag;
+        p.vy *= p.drag;
+        p.vy += p.g;
+
+        p.life -= 1;
+        const lifeN = clamp(p.life / p.maxLife, 0, 1);
+
+        let alpha = Math.pow(lifeN, 0.65);
+        if(p.twinkle){
+          alpha *= (0.55 + 0.45*Math.sin(p.phase + (p.maxLife - p.life)*0.28));
+        }
+
+        // main
+        const r = p.size * (1.0 + (1-lifeN)*0.18);
+        drawGlowCircle(p.x, p.y, r, p.color, alpha);
+
+        // glitter micro sparks
+        if(p.glitter && Math.random() < 0.22){
+          sparkles.push({
+            x: p.x + rand(-2,2),
+            y: p.y + rand(-2,2),
+            vx: rand(-0.6,0.6),
+            vy: rand(-0.6,0.6),
+            life: Math.floor(rand(10, 18)),
+            color: (Math.random()<0.5) ? "#fff" : randColor(),
+            r: rand(0.8, 1.4)
+          });
+        }
+      }
+      particles = particles.filter(p => p.life > 0 && p.y < H + 60);
+
+      // sparkles
+      for(const s of sparkles){
+        s.x += s.vx;
+        s.y += s.vy;
+        s.vx *= 0.98;
+        s.vy *= 0.98;
+        s.life -= 1;
+        drawGlowCircle(s.x, s.y, s.r, s.color, Math.max(s.life/24,0));
+      }
+      sparkles = sparkles.filter(s => s.life > 0);
+
+      if(fwOn){
+        fwRAF = requestAnimationFrame(loop);
+      } else {
+        ctx.clearRect(0,0,W,H);
+        fwRAF = null;
+      }
+    }
+
+    if(fwOn) fwStart();
+
+    // ===== YouTube embed =====
     function extractYouTubeId(url){
       const m1 = url.match(/youtube\.com\/shorts\/([a-zA-Z0-9_-]+)/);
       if(m1 && m1[1]) return m1[1];
@@ -351,10 +666,6 @@
       stage.classList.add("show");
       autoInfo.textContent = "Auto balik: —";
     } else {
-      // IMPORTANT:
-      // - enablejsapi=1 + origin helps compatibility
-      // - mute=1 for autoplay compliance
-      // - playsinline=1 for iOS
       const origin = encodeURIComponent(location.origin || "");
       const embed =
         "https://www.youtube.com/embed/" + vid +
@@ -366,16 +677,12 @@
       iframe.allowFullscreen = true;
       iframe.referrerPolicy = "no-referrer-when-downgrade";
 
-      // If embed blocked, YouTube often shows an error INSIDE iframe.
-      // We can't read it due to cross-origin, so we show fallback if it doesn't load in time.
       let loaded = false;
       iframe.addEventListener("load", () => { loaded = true; });
 
       stage.appendChild(iframe);
       requestAnimationFrame(()=> stage.classList.add("show"));
 
-      // Fallback timer: if not loaded properly after 3s, show button to open YT.
-      // (Still keeps iframe there; user can try play.)
       setTimeout(() => {
         if(!loaded) fallback.classList.add("show");
       }, 3000);
@@ -385,6 +692,3 @@
   </script>
 </body>
 </html>
-
-
-
