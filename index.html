@@ -364,11 +364,13 @@
     .gate.show{display:block}
 
     .gateBackdrop{
-      position:absolute; inset:0;
-      background: rgba(0,0,0,.35);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-    }
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(1200px 600px at 20% 10%, rgba(255,94,168,.35), transparent 60%),
+    radial-gradient(900px 600px at 80% 20%, rgba(138,92,255,.45), transparent 60%),
+    linear-gradient(160deg, #0b1020, #1a1033);
+}
 
     /* blur konten index */
     body.gated > .wrap{
@@ -1528,3 +1530,4 @@ Dan aku sayang kamu, banyak. 💖
   </script>
 </body>
 </html>
+
