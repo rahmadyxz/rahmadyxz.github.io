@@ -6,14 +6,12 @@
   <title>Video 🎬</title>
   <style>
     :root{
-      --bg1:#0b1020;
-      --bg2:#1a1033;
+      --bg1:#0b1020; --bg2:#1a1033;
       --card: rgba(255,255,255,.08);
       --stroke: rgba(255,255,255,.16);
       --text: rgba(255,255,255,.92);
       --muted: rgba(255,255,255,.72);
-      --accent1:#ff5ea8;
-      --accent2:#8a5cff;
+      --accent1:#ff5ea8; --accent2:#8a5cff;
       --shadow: 0 20px 60px rgba(0,0,0,.45);
       --radius: 22px;
     }
@@ -30,7 +28,6 @@
         linear-gradient(160deg, var(--bg1), var(--bg2));
       overflow-x:hidden;
     }
-
     .wrap{
       min-height:100%;
       display:flex;
@@ -39,7 +36,6 @@
       padding:28px 16px 50px;
       gap:18px;
     }
-
     header{
       width:min(980px, 100%);
       display:flex;
@@ -77,7 +73,7 @@
     .primary{
       border:0;
       background: linear-gradient(135deg, var(--accent1), var(--accent2));
-      box-shadow: 0 12px 28px rgba(138,92,255,.18);
+      box-shadow: 0 12px 28px rgba(255,94,168,.16);
     }
 
     .card{
@@ -90,18 +86,15 @@
       overflow:hidden;
       position:relative;
     }
-
     .player{
       padding:16px;
       display:flex;
       justify-content:center;
     }
-
-    /* ✅ IG STORY STAGE */
     .stage{
-      width: min(420px, 100%);     /* story-ish */
-      aspect-ratio: 9 / 16;        /* ✅ story */
-      max-height: 78vh;            /* biar ga kepanjangan di desktop */
+      width: min(420px, 100%);
+      aspect-ratio: 9 / 16;
+      max-height: 78vh;
       border-radius: 26px;
       overflow:hidden;
       border:1px solid rgba(255,255,255,.14);
@@ -113,28 +106,25 @@
       isolation:isolate;
     }
     .stage.show{opacity:1; transform: translateY(0)}
-
-    video, iframe{
+    iframe{
       width:100%;
       height:100%;
       display:block;
       background:#000;
       position:relative;
       z-index:1;
-      object-fit: cover;           /* ✅ kayak story */
+      border:0;
     }
 
     /* LOVE overlay */
     .loveLayer{
-      position:absolute;
-      inset:0;
+      position:absolute; inset:0;
       pointer-events:none;
       z-index:2;
       opacity:0;
       transition: opacity .25s ease;
     }
     .stage.loving .loveLayer{opacity:1}
-
     .tinyLove{
       position:absolute;
       width:10px; height:10px;
@@ -154,7 +144,6 @@
     }
     .tinyLove::before{left:-5px; top:0}
     .tinyLove::after{left:0; top:-5px}
-
     @keyframes loveRise{
       0%{ transform: translateY(18px) rotate(45deg) scale(.9); opacity:0 }
       18%{ opacity:.55 }
@@ -162,6 +151,21 @@
       85%{ opacity:.20 }
       100%{ transform: translateY(18px) rotate(45deg) scale(.92); opacity:0 }
     }
+
+    /* fallback overlay */
+    .fallback{
+      position:absolute; inset:0;
+      display:none;
+      place-items:center;
+      padding:18px;
+      z-index:3;
+      background: radial-gradient(700px 500px at 50% 30%, rgba(255,94,168,.14), transparent 60%),
+                  rgba(0,0,0,.35);
+      text-align:center;
+    }
+    .fallback.show{display:grid}
+    .fallback h2{margin:0 0 6px 0; font-size:18px}
+    .fallback p{margin:0 0 12px 0; color:rgba(255,255,255,.75); line-height:1.4; font-size:13px}
 
     .bar{
       display:flex;
@@ -173,13 +177,8 @@
       border-top:1px solid rgba(255,255,255,.10);
       background: rgba(255,255,255,.03);
     }
-    .left{
-      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
-    }
-    .right{
-      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
-      justify-content:flex-end;
-    }
+    .left{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
+    .right{display:flex; gap:10px; align-items:center; flex-wrap:wrap; justify-content:flex-end;}
     .badge{
       font-size:12px;
       color: rgba(255,255,255,.80);
@@ -189,7 +188,6 @@
       border-radius:999px;
     }
     .muted{color:var(--muted);font-size:13px}
-
     footer{
       width:min(980px, 100%);
       color: rgba(255,255,255,.55);
@@ -207,7 +205,7 @@
         <span class="dot"></span>
         <div>
           <div>Video buat kamu 🎬</div>
-          <div class="mini" id="hint"></div>
+          <div class="mini" id="hint">Kalau embed keblok, pencet “Buka di YouTube”.</div>
         </div>
       </div>
       <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end">
@@ -219,6 +217,17 @@
       <div class="player">
         <div class="stage" id="stage" aria-label="Video stage">
           <div class="loveLayer" id="loveLayer"></div>
+
+          <div class="fallback" id="fallback">
+            <div>
+              <h2>Video-nya keblok 😿</h2>
+              <p>
+                YouTube kadang ngeblok playback di website lain.
+                Tenang, tetap bisa nonton dengan buka langsung di YouTube.
+              </p>
+              <a class="btn primary" id="openYT" target="_blank" rel="noopener">Buka di YouTube ▶</a>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -239,35 +248,23 @@
   </div>
 
   <script>
-    /** ===== EDIT INI ===== */
     const CONFIG = {
-      // ✅ Catbox direct link (story video)
-      videoUrl: "https://files.catbox.moe/l3icc4.mp4",
-
-      // (Kalau nanti pake iframe provider lain, ini dipakai)
-      autoBackSecForIframe: 70,
-
-      // Defaults
+      shortsUrl: "https://www.youtube.com/shorts/JtlnMtZ8m7I",
+      autoBackSec: 75,
       autoBackOn: true,
       loveOn: true,
-
-      // Autoplay behavior (coba suara dulu, kalau keblok -> fallback muted)
-      autoplayTrySound: true,
-
-      // Love density
       loveCount: 16
     };
-    /** ==================== */
 
     const stage = document.getElementById("stage");
     const loveLayer = document.getElementById("loveLayer");
-    const modeBadge = document.getElementById("modeBadge");
     const loveBadge = document.getElementById("loveBadge");
     const autoInfo = document.getElementById("autoInfo");
     const toggleAuto = document.getElementById("toggleAuto");
     const toggleLove = document.getElementById("toggleLove");
     const backNow = document.getElementById("backNow");
-    const hint = document.getElementById("hint");
+    const fallback = document.getElementById("fallback");
+    const openYT = document.getElementById("openYT");
 
     let autoOn = !!CONFIG.autoBackOn;
     let loveOn = !!CONFIG.loveOn;
@@ -281,6 +278,7 @@
 
     function setAutoUI(){
       toggleAuto.textContent = "Auto balik: " + (autoOn ? "ON" : "OFF");
+      autoInfo.textContent = "Auto balik: " + (autoOn ? "~" + (CONFIG.autoBackSec || 75) + "s" : "OFF");
     }
     function setLoveUI(){
       toggleLove.textContent = "Love: " + (loveOn ? "ON 💗" : "OFF");
@@ -294,7 +292,7 @@
       autoOn = !autoOn;
       setAutoUI();
       if(!autoOn) clearAutoTimer();
-      else setupAutoIfNeeded();
+      else setupAutoTimer(CONFIG.autoBackSec || 75);
     });
 
     toggleLove.addEventListener("click", () => {
@@ -306,18 +304,15 @@
     function clearAutoTimer(){
       if(autoTimer) clearTimeout(autoTimer);
       autoTimer = null;
-      autoInfo.textContent = "Auto balik: " + (autoOn ? "ON" : "OFF");
     }
     function setupAutoTimer(sec){
       clearAutoTimer();
       if(!autoOn) return;
-      autoInfo.textContent = "Auto balik: ~" + sec + "s";
       autoTimer = setTimeout(() => {
         if(autoOn) goBack();
       }, sec * 1000);
     }
 
-    // ===== Love builder =====
     function buildLove(){
       loveLayer.innerHTML = "";
       const n = Math.max(6, Math.min(40, CONFIG.loveCount || 16));
@@ -340,100 +335,54 @@
     }
     if(loveOn) buildLove();
 
-    // ===== Helpers =====
-    function isLikelyDirectVideo(url){
-      return /\.(mp4|webm|ogg|mov|m4v)(\?|#|$)/i.test(url);
+    function extractYouTubeId(url){
+      const m1 = url.match(/youtube\.com\/shorts\/([a-zA-Z0-9_-]+)/);
+      if(m1 && m1[1]) return m1[1];
+      const m2 = url.match(/youtu\.be\/([a-zA-Z0-9_-]+)/);
+      if(m2 && m2[1]) return m2[1];
+      const m3 = url.match(/[?&]v=([a-zA-Z0-9_-]+)/);
+      if(m3 && m3[1]) return m3[1];
+      return null;
     }
 
-    function guessMime(url){
-      const u = url.toLowerCase();
-      if(u.endsWith(".webm")) return "video/webm";
-      if(u.endsWith(".ogg"))  return "video/ogg";
-      if(u.endsWith(".mov"))  return "video/quicktime";
-      if(u.endsWith(".m4v"))  return "video/x-m4v";
-      return "video/mp4";
-    }
+    const vid = extractYouTubeId(CONFIG.shortsUrl || "");
+    openYT.href = CONFIG.shortsUrl;
 
-    // ===== Render player =====
-    const rawUrl = (CONFIG.videoUrl || "").trim();
-
-    if(!rawUrl){
-      stage.insertAdjacentHTML("beforeend",
-        "<div style='position:absolute;inset:0;display:grid;place-items:center;padding:18px;color:rgba(255,255,255,.78);z-index:3'>" +
-        "<div style='text-align:center'>Isi dulu <b>CONFIG.videoUrl</b> ya.</div></div>"
-      );
-      modeBadge.textContent = "Mode: —";
-      autoInfo.textContent = "Auto balik: —";
+    if(!vid){
+      fallback.classList.add("show");
       stage.classList.add("show");
+      autoInfo.textContent = "Auto balik: —";
     } else {
-      const useVideoTag = isLikelyDirectVideo(rawUrl);
+      // IMPORTANT:
+      // - enablejsapi=1 + origin helps compatibility
+      // - mute=1 for autoplay compliance
+      // - playsinline=1 for iOS
+      const origin = encodeURIComponent(location.origin || "");
+      const embed =
+        "https://www.youtube.com/embed/" + vid +
+        "?autoplay=1&mute=1&playsinline=1&controls=1&rel=0&modestbranding=1&enablejsapi=1&origin=" + origin;
 
-      if(useVideoTag){
-        autoInfo.textContent = "Auto balik: " + (autoOn ? "ON" : "OFF");
+      const iframe = document.createElement("iframe");
+      iframe.src = embed;
+      iframe.allow = "autoplay; encrypted-media; fullscreen; picture-in-picture";
+      iframe.allowFullscreen = true;
+      iframe.referrerPolicy = "no-referrer-when-downgrade";
 
-        const v = document.createElement("video");
-        v.setAttribute("playsinline", "");  // penting di iOS
-        v.setAttribute("controls", "");
-        v.setAttribute("preload", "auto");
-        v.autoplay = true;
+      // If embed blocked, YouTube often shows an error INSIDE iframe.
+      // We can't read it due to cross-origin, so we show fallback if it doesn't load in time.
+      let loaded = false;
+      iframe.addEventListener("load", () => { loaded = true; });
 
-        // coba suara dulu, kalau keblok fallback muted
-        v.muted = !CONFIG.autoplayTrySound;
+      stage.appendChild(iframe);
+      requestAnimationFrame(()=> stage.classList.add("show"));
 
-        const source = document.createElement("source");
-        source.src = rawUrl;
-        source.type = guessMime(rawUrl);
-        v.appendChild(source);
+      // Fallback timer: if not loaded properly after 3s, show button to open YT.
+      // (Still keeps iframe there; user can try play.)
+      setTimeout(() => {
+        if(!loaded) fallback.classList.add("show");
+      }, 3000);
 
-        stage.appendChild(v);
-        requestAnimationFrame(()=> stage.classList.add("show"));
-
-        (async () => {
-          try{
-            await v.play();
-          }catch(e){
-            try{
-              v.muted = true;
-              await v.play();
-              hint.textContent = "";
-            }catch(_){
-              hint.textContent = "";
-            }
-          }
-        })();
-
-        v.addEventListener("ended", () => {
-          if(autoOn) goBack();
-        });
-
-        window.setupAutoIfNeeded = () => {
-          autoInfo.textContent = "Auto balik: " + (autoOn ? "ON" : "OFF");
-        };
-        window.setupAutoIfNeeded();
-
-      } else {
-        // fallback iframe mode (kalau suatu saat pakai provider yang bukan direct)
-        modeBadge.textContent = "Mode: iframe";
-        const iframe = document.createElement("iframe");
-        iframe.src = rawUrl;
-        iframe.allow = "autoplay; fullscreen";
-        iframe.allowFullscreen = true;
-
-        stage.appendChild(iframe);
-        requestAnimationFrame(()=> stage.classList.add("show"));
-
-        window.setupAutoIfNeeded = () => {
-          if(autoOn) setupAutoTimer(CONFIG.autoBackSecForIframe || 60);
-          else clearAutoTimer();
-        };
-        window.setupAutoIfNeeded();
-
-        hint.textContent = "Link ini bukan direct video. Auto balik pakai timer.";
-      }
-    }
-
-    function setupAutoIfNeeded(){
-      if(window.setupAutoIfNeeded) window.setupAutoIfNeeded();
+      setupAutoTimer(CONFIG.autoBackSec || 75);
     }
   </script>
 </body>
