@@ -292,7 +292,7 @@
       autoOn = !autoOn;
       setAutoUI();
       if(!autoOn) clearAutoTimer();
-      else setupAutoTimer(CONFIG.autoBackSec || 75);
+      else setupAutoTimer(CONFIG.autoBackSec || 28);
     });
 
     toggleLove.addEventListener("click", () => {
@@ -382,8 +382,9 @@
         if(!loaded) fallback.classList.add("show");
       }, 3000);
 
-      setupAutoTimer(CONFIG.autoBackSec || 75);
+      setupAutoTimer(CONFIG.autoBackSec || 28);
     }
   </script>
 </body>
 </html>
+
