@@ -234,7 +234,6 @@
       <div class="bar">
         <div class="left">
           <span class="badge" id="loveBadge">Love: ON</span>
-          <span class="muted" id="autoInfo">Auto balik: —</span>
         </div>
         <div class="right">
           <button class="btn" id="toggleLove">Love: ON 💗</button>
@@ -278,7 +277,6 @@
 
     function setAutoUI(){
       toggleAuto.textContent = "Auto balik: " + (autoOn ? "ON" : "OFF");
-      autoInfo.textContent = "Auto balik: " + (autoOn ? "~" + (CONFIG.autoBackSec || 75) + "s" : "OFF");
     }
     function setLoveUI(){
       toggleLove.textContent = "Love: " + (loveOn ? "ON 💗" : "OFF");
@@ -387,4 +385,5 @@
   </script>
 </body>
 </html>
+
 
