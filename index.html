@@ -148,34 +148,33 @@
     }
 
     /* ✅ GIF row 1 baris (Tenor) */
-.heroAnim{
-  display:flex;
-  gap:10px;
-  align-items:center;
-  justify-content:flex-start;   /* mulai dari kiri */
-  width:100%;
-  margin: -2px 0 8px;          /* posisi di atas dalam card */
-}
+    .heroAnim{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:flex-start;   /* mulai dari kiri */
+      width:100%;
+      margin: -2px 0 8px;          /* posisi di atas dalam card */
+    }
 
-.gifAnim{
-  width:56px;                  /* ukuran per gif (bisa 52-64) */
-  height:56px;
-  flex: 0 0 auto;              /* jangan melebar */
-  object-fit:cover;
-  border-radius:14px;
-  border:1px solid rgba(255,255,255,.14);
-  filter: drop-shadow(0 10px 22px rgba(0,0,0,.30));
-  opacity:.95;
-}
+    .gifAnim{
+      width:56px;                  /* ukuran per gif (bisa 52-64) */
+      height:56px;
+      flex: 0 0 auto;              /* jangan melebar */
+      object-fit:cover;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.14);
+      filter: drop-shadow(0 10px 22px rgba(0,0,0,.30));
+      opacity:.95;
+    }
 
-/* kalau gif kepanjangan di HP kecil, biar tetep 1 baris & bisa geser halus */
-.heroAnim{
-  overflow-x:auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-}
-.heroAnim::-webkit-scrollbar{display:none;}
-
+    /* kalau gif kepanjangan di HP kecil, biar tetep 1 baris & bisa geser halus */
+    .heroAnim{
+      overflow-x:auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .heroAnim::-webkit-scrollbar{display:none;}
 
     h1{
       margin:0;
@@ -323,44 +322,44 @@
       background: rgba(255,255,255,.04);
     }
     .modal .content{
-  padding:22px 18px 18px;
-  max-height: 52vh;          /* ✅ tinggi card surat (setengah layar) */
-  overflow-y: auto;           /* ✅ scroll di dalam card */
-  overscroll-behavior: contain;
-  scrollbar-gutter: stable;   /* ✅ biar layout gak geser pas scrollbar muncul */
-}
+      padding:22px 18px 18px;
+      max-height: 52vh;          /* ✅ tinggi card surat (setengah layar) */
+      overflow-y: auto;           /* ✅ scroll di dalam card */
+      overscroll-behavior: contain;
+      scrollbar-gutter: stable;   /* ✅ biar layout gak geser pas scrollbar muncul */
+    }
 
-/* isi surat */
-.letter{
-  line-height:1.75;
-  color: rgba(255,255,255,.88);
-  font-size: 15px;
-  white-space: pre-wrap;
-}
+    /* isi surat */
+    .letter{
+      line-height:1.75;
+      color: rgba(255,255,255,.88);
+      font-size: 15px;
+      white-space: pre-wrap;
+    }
 
-/* ✅ scrollbar (Chrome/Edge/Safari) */
-.modal .content::-webkit-scrollbar{
-  width: 10px;
-}
-.modal .content::-webkit-scrollbar-track{
-  background: rgba(255,255,255,.06);
-  border-radius: 999px;
-}
-.modal .content::-webkit-scrollbar-thumb{
-  background: rgba(255,255,255,.22);
-  border-radius: 999px;
-  border: 2px solid rgba(0,0,0,0);
-  background-clip: padding-box;
-}
-.modal .content::-webkit-scrollbar-thumb:hover{
-  background: rgba(255,255,255,.28);
-}
+    /* ✅ scrollbar (Chrome/Edge/Safari) */
+    .modal .content::-webkit-scrollbar{
+      width: 10px;
+    }
+    .modal .content::-webkit-scrollbar-track{
+      background: rgba(255,255,255,.06);
+      border-radius: 999px;
+    }
+    .modal .content::-webkit-scrollbar-thumb{
+      background: rgba(255,255,255,.22);
+      border-radius: 999px;
+      border: 2px solid rgba(0,0,0,0);
+      background-clip: padding-box;
+    }
+    .modal .content::-webkit-scrollbar-thumb:hover{
+      background: rgba(255,255,255,.28);
+    }
 
-/* ✅ scrollbar (Firefox) */
-.modal .content{
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255,255,255,.22) rgba(255,255,255,.06);
-}
+    /* ✅ scrollbar (Firefox) */
+    .modal .content{
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,.22) rgba(255,255,255,.06);
+    }
     .modal .footer{
       display:flex; gap:10px; justify-content:flex-end;
       padding: 0 18px 18px;
@@ -395,14 +394,13 @@
     .gate.show{display:block}
 
     .gateBackdrop{
-  position:absolute;
-  inset:0;
-  background:
-    radial-gradient(1200px 600px at 20% 10%, rgba(255,94,168,.35), transparent 60%),
-    radial-gradient(900px 600px at 80% 20%, rgba(138,92,255,.45), transparent 60%),
-    linear-gradient(160deg, #0b1020, #1a1033);
-}
-
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(1200px 600px at 20% 10%, rgba(255,94,168,.35), transparent 60%),
+        radial-gradient(900px 600px at 80% 20%, rgba(138,92,255,.45), transparent 60%),
+        linear-gradient(160deg, #0b1020, #1a1033);
+    }
 
     /* blur konten index */
     body.gated > .wrap{
@@ -424,6 +422,14 @@
       padding: 18px;
       color: rgba(255,255,255,.92);
     }
+
+    .gateGif{
+  width:80px;
+  margin: 6px 0 6px;
+  display:block;
+  border-radius:12px;
+  filter: drop-shadow(0 4px 10px rgba(0,0,0,.35));
+}
 
     .gateTop{
       display:flex; align-items:center; gap:12px;
@@ -689,12 +695,73 @@
       background: linear-gradient(135deg, var(--accent1), var(--accent2));
       box-shadow: 0 12px 28px rgba(138,92,255,.18);
     }
+
+    /* =========================
+       ✅ START POPUP (BARU)
+       ========================= */
+    .startPop{
+      position:fixed; inset:0;
+      z-index: 20000; /* di atas gate */
+      display:none;
+      align-items:center; justify-content:center;
+      background: rgba(0,0,0,.55);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      opacity:0;
+      transition: opacity .35s ease;
+    }
+    .startPop.show{ display:flex; opacity:1; }
+    .startPop.hide{ opacity:0; pointer-events:none; }
+
+    .startCard{
+      width:min(420px, 90vw);
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.08);
+      padding: 18px;
+      text-align:center;
+      box-shadow: 0 30px 90px rgba(0,0,0,.55);
+    }
+    .startTitle{ font-weight:900; }
+    .startSub{ margin-top:6px; font-size:13px; color: rgba(255,255,255,.72); }
+    .startBtn{
+      margin-top:14px;
+      width:100%;
+      border:0;
+      padding:12px 14px;
+      border-radius: 999px;
+      font-weight:900;
+      cursor:pointer;
+      background: linear-gradient(135deg, var(--accent1), var(--accent2));
+      color: rgba(255,255,255,.92);
+      display:block;
+  margin: 16px auto 0;
+  max-width: 260px;   /* bebas lu atur */
+  width: 100%;
+    }
   </style>
 </head>
 
 <body>
   <!-- ✅ fireworks background -->
   <canvas id="confetti"></canvas>
+
+  <!-- ✅ START POPUP (BARU) -->
+  <div id="startPop" class="startPop show" aria-hidden="false">
+  <div class="startCard">
+
+    <img 
+      src="https://media.tenor.com/Y3bJsdez11QAAAAi/cute-spin-cute-bubu.gif" 
+      alt="gif"
+      style="width:140px; border-radius:16px; margin-bottom:14px;"
+    >
+
+    <div class="startTitle">Siap ya 🤩</div>
+    <button id="startBtn" class="startBtn" type="button">Mulai ✨</button>
+    <br/>
+    <div class="startSub">Made with love 💗 @rahmadyxz</div>
+  </div>
+</div>
 
   <!-- ✅ GATE overlay -->
   <div id="gate" class="gate show" aria-hidden="false">
@@ -723,13 +790,18 @@
         <div class="gateDot"></div>
         <div>
           <div class="gateTitle">Buat kamu 💌</div>
-          <div class="gateSub">Buka dulu ya sebelum masuk 😋</div>
+          <!-- GIF DI SINI -->
+          <img 
+          src="https://media1.tenor.com/m/1nIDXbABxgsAAAAC/gif-gifkk.gif"
+          class="gateGif"
+          alt="gif">
+          <div class="gateSub"></div>
         </div>
       </div>
 
       <div id="gateBody" class="gateBody">
         <p class="gateText">
-          Ada pesan kecil buat kamu. Klik tombol di bawah ya 😊
+          Ada pesan kecil untuk kamu. Buka dulu ya sebelum masuk 😋
         </p>
 
         <button id="gateOpen" class="gateBtn primary" type="button">
@@ -788,6 +860,11 @@
     <source src="fixyou.mp3" type="audio/mpeg" />
   </audio>
 
+  <!-- ✅ AUDIO untuk start popup (BARU) -->
+  <audio id="bgmStart" preload="auto" loop>
+    <source src="myfinger.mp3" type="audio/mpeg" />
+  </audio>
+
   <div class="wrap">
     <div class="hearts" id="hearts"></div>
 
@@ -811,12 +888,12 @@
         <div class="content">
           <!-- ✅ GIF Tenor (ganti URL-nya sesuai GIF lu) -->
           <div class="heroAnim" aria-label="gif row">
-  <img class="gifAnim" src="https://media.tenor.com/RGsJYjA5gOsAAAAj/peach-goma.gif" alt="gif 1" loading="lazy" decoding="async" />
-  <img class="gifAnim" src="https://media.tenor.com/GgOmrYFNGMcAAAAj/peach-goma.gif" alt="gif 2" loading="lazy" decoding="async" />
-  <img class="gifAnim" src="https://media.tenor.com/v63_brUy45wAAAAj/peach-goma-love-peach-cat.gif" alt="gif 3" loading="lazy" decoding="async" />
-  <img class="gifAnim" src="https://media.tenor.com/6uHiHBHG22wAAAAj/peach-and-goma.gif" alt="gif 4" loading="lazy" decoding="async" />
-  <img class="gifAnim" src="https://media.tenor.com/TMl58EiFm1IAAAAj/cute.gif" alt="gif 5" loading="lazy" decoding="async" />
-</div>
+            <img class="gifAnim" src="https://media.tenor.com/RGsJYjA5gOsAAAAj/peach-goma.gif" alt="gif 1" loading="lazy" decoding="async" />
+            <img class="gifAnim" src="https://media.tenor.com/GgOmrYFNGMcAAAAj/peach-goma.gif" alt="gif 2" loading="lazy" decoding="async" />
+            <img class="gifAnim" src="https://media.tenor.com/v63_brUy45wAAAAj/peach-goma-love-peach-cat.gif" alt="gif 3" loading="lazy" decoding="async" />
+            <img class="gifAnim" src="https://media.tenor.com/6uHiHBHG22wAAAAj/peach-and-goma.gif" alt="gif 4" loading="lazy" decoding="async" />
+            <img class="gifAnim" src="https://media.tenor.com/TMl58EiFm1IAAAAj/cute.gif" alt="gif 5" loading="lazy" decoding="async" />
+          </div>
 
           <h1>
             Happy Birthday,<br />
@@ -849,12 +926,12 @@
           <div class="pad">
             <h2 style="margin:0 0 6px 0; font-size:18px;">Harapan aku buat kamu</h2>
             <ul id="wishList" style="margin:10px 0 0 18px; color:var(--muted); line-height:1.7;">
-  <li data-text="Semoga kamu selalu sehat dan penuh senyum."></li>
-  <li data-text="Semoga hatimu selalu ringan dan tenang."></li>
-  <li data-text="Semoga semua mimpi kecilmu satu per satu jadi nyata."></li>
-  <li data-text="Semoga kamu selalu merasa cukup dan dicintai."></li>
-  <li data-text="Dan semoga hari ini, kamu benar-benar bahagia 🤍"></li>
-</ul>
+              <li data-text="Semoga kamu selalu sehat dan penuh senyum."></li>
+              <li data-text="Semoga hatimu selalu ringan dan tenang."></li>
+              <li data-text="Semoga semua mimpi kecilmu satu per satu jadi nyata."></li>
+              <li data-text="Semoga kamu selalu merasa cukup dan dicintai."></li>
+              <li data-text="Dan semoga hari ini, kamu benar-benar bahagia 🤍"></li>
+            </ul>
           </div>
         </section>
       </aside>
@@ -908,7 +985,7 @@
       toName: "Imelia Rinjani Az-Zahra",
       fromName: "",
       tagline: "“happy birthday, my favorite person.”",
-      birthday: "2026-01-17", // full date
+      birthday: "2026-01-18", // full date
       age: "18",
       subtitle:
         "Hari ini bukan cuma ulang tahun kamu—ini hari spesial yang bikin dunia jadi sedikit lebih manis. Aku bikin halaman kecil ini biar kamu bisa senyum setiap kali buka.",
@@ -917,7 +994,7 @@
 
 Selamat ulang tahun, ya.
 Aku nulis ini di tanggal 15 Januari 2026,
-aku nulis ini H-2 sebelum kamu & fatim lomba fashion show di TangCity.
+aku nulis ini H-2 sebelum kamu ke acara lomba fashion show di TangCity.
 air mata aku netes perlahan, karna teringat pertama kali kita bertemu.
 Di saat hubungan kita lagi di titik yang… aku sendiri nggak tau harus nyebutnya apa.
 Hubungan kita hari ini ( 6 Februari ) gimana ya? hehe.
@@ -941,7 +1018,7 @@ tapi selalu berhasil bikin aku ngerasa punya rumah…
 walaupun sekarang aku nggak tau,
 rumah itu masih milik aku atau nggak.
 
-Dan aku mau bilang satu hal yang mungkin nggak pernah kamu tau sepenuhnya…
+Dan aku mau bilang satu hal lagi…
 makasih ya, karena kamu udah bikin aku berani jatuh cinta lagi,
 setelah lima tahun lamanya aku nutup hati.
 Hati yang sudah lama berkarat,
@@ -988,9 +1065,6 @@ ingat...
 aku pernah menyayangi kamu dengan penuh,
 walaupun akhirnya harus ngelepas pelan-pelan.
 
-Aku akan tetap nepatin janji aku dulu:
-kita akan tetap pergi ke Aquarium Date Bulan April nanti.
-
 Selamat ulang tahun yaa cantikkk.
 Semoga kamu selalu bahagia…
 meskipun mungkin bukan lagi sama aku 💖
@@ -1023,20 +1097,20 @@ meskipun mungkin bukan lagi sama aku 💖
     /** =========================== */
 
     async function typeList(listEl, opts={}){
-  const items = [...listEl.querySelectorAll("li")];
-  const speed = opts.speedMs ?? 24;
-  const jitter = opts.jitter ?? 14;
+      const items = [...listEl.querySelectorAll("li")];
+      const speed = opts.speedMs ?? 24;
+      const jitter = opts.jitter ?? 14;
 
-  for(const li of items){
-    const text = li.dataset.text || "";
-    li.textContent = "";
-    for(let i=0;i<text.length;i++){
-      li.textContent += text[i];
-      await sleep(speed + Math.random()*jitter);
+      for(const li of items){
+        const text = li.dataset.text || "";
+        li.textContent = "";
+        for(let i=0;i<text.length;i++){
+          li.textContent += text[i];
+          await sleep(speed + Math.random()*jitter);
+        }
+        await sleep(240);
+      }
     }
-    await sleep(240);
-  }
-}
 
     // ===== Helpers =====
     const fmtDateID = (d) => new Intl.DateTimeFormat("id-ID", { dateStyle:"long" }).format(d);
@@ -1069,6 +1143,11 @@ meskipun mungkin bukan lagi sama aku 💖
     const gateMedia = document.getElementById("gateMedia");
     const loveLayer = document.getElementById("loveLayer");
 
+    // ✅ START POPUP ELEMENTS (kalau lu udah nambahin popup mulai di atas)
+    const bgmStart = document.getElementById("bgmStart");   // myfinger.mp3
+    const startPop = document.getElementById("startPop");
+    const startBtn = document.getElementById("startBtn");
+
     // gate countdown elements
     const gateCountLabel = document.getElementById("gateCountLabel");
     const gateCountDate = document.getElementById("gateCountDate");
@@ -1092,6 +1171,7 @@ meskipun mungkin bukan lagi sama aku 💖
     document.body.classList.add("gated");
     bgm.volume = 0;
     bgmIndex.volume = 0;
+    if(bgmStart) bgmStart.volume = 0;
 
     // ===== Volume fade =====
     function fadeVolumeEl(audioEl, target=0.55, ms=1200){
@@ -1129,11 +1209,11 @@ meskipun mungkin bukan lagi sama aku 💖
         if(typingAbort.stop) break;
         txt.textContent += text[i];
 
-// auto scroll mengikuti typing
-const wrap = el.closest(".content");
-if(wrap){
-  wrap.scrollTop = wrap.scrollHeight;
-}
+        // auto scroll mengikuti typing
+        const wrap = el.closest(".content");
+        if(wrap){
+          wrap.scrollTop = wrap.scrollHeight;
+        }
         await sleep(speed + Math.random()*jitter);
       }
 
@@ -1276,29 +1356,57 @@ if(wrap){
       }
     }
 
+    // ✅ musik myfinger (start popup)
+    async function playStartMusicFromStart(){
+      if(!bgmStart) return;
+      try{ bgmStart.pause(); bgmStart.currentTime = 0; }catch(e){}
+      bgmStart.volume = 0;
+      try{
+        await bgmStart.play();
+        fadeVolumeEl(bgmStart, CONFIG.musicVolume ?? 0.55, 900);
+      }catch(_){}
+    }
+    function stopStartMusic(){
+      if(!bgmStart) return;
+      try{ bgmStart.pause(); bgmStart.currentTime = 0; }catch(_){}
+    }
+
+    // ✅ prime audio biar mobile gak ngeblok (FIX ERROR primeIndexBgm undefined)
+    let primed = false;
+    async function primeIndexBgm(){
+      if(primed) return;
+      primed = true;
+      try{
+        // "unlock" audio context: play-pause cepat (tanpa bunyi)
+        bgmIndex.volume = 0;
+        await bgmIndex.play();
+        bgmIndex.pause();
+        bgmIndex.currentTime = 0;
+      }catch(_){}
+    }
+
     // 👉 penting: supaya lagu index bisa nyala otomatis pas gate ilang,
     // kita "prime" dulu saat user tap (gateOpen / gateSkip)
     let indexStarted = false;
 
-async function startIndexBgmNow(){
-  if(indexStarted) return;
-  indexStarted = true;
+    async function startIndexBgmNow(){
+      if(indexStarted) return;
+      indexStarted = true;
 
-  try{
-    bgmIndex.pause();
-    bgmIndex.currentTime = 0;
-  }catch(e){}
+      try{
+        bgmIndex.pause();
+        bgmIndex.currentTime = 0;
+      }catch(e){}
 
-  bgmIndex.volume = 0;
+      bgmIndex.volume = 0;
 
-  try{
-    await bgmIndex.play(); // FIXYOU BARU MULAI DI SINI
-    fadeVolumeEl(bgmIndex, CONFIG.indexMusicVolume ?? 0.55, CONFIG.indexMusicFadeInMs || 1400);
-  }catch(e){
-    // Kalau HP ngeblok autoplay, ya udah — nanti bisa kita trigger via tombol lain
-    indexStarted = false;
-  }
-}
+      try{
+        await bgmIndex.play(); // FIXYOU BARU MULAI DI SINI
+        fadeVolumeEl(bgmIndex, CONFIG.indexMusicVolume ?? 0.55, CONFIG.indexMusicFadeInMs || 1400);
+      }catch(e){
+        indexStarted = false;
+      }
+    }
 
     // ===== Close gate -> baru mulai fireworks + lagu index =====
     let enteredIndexOnce = false;
@@ -1309,21 +1417,38 @@ async function startIndexBgmNow(){
         gate.classList.remove("exiting");
         gate.setAttribute("aria-hidden", "true");
         document.body.classList.remove("gated");
+
         typeList(document.getElementById("wishList"), {
-  speedMs: 24,
-  jitter: 14
-});
+          speedMs: 24,
+          jitter: 14
+        });
 
         if(!enteredIndexOnce){
           enteredIndexOnce = true;
-
-          // 🔥 ini inti yang lu mau:
-          // fireworks baru start setelah gate bener-bener hilang (masuk index)
           startFireworksLoop();
-          // lagu index juga start barengan fireworks (kalau udah keprime)
           startIndexBgmNow();
         }
       }, 780);
+    }
+
+    // ✅ START POPUP FLOW: klik Mulai -> play myfinger -> popup hilang -> gate tampil
+    // (ini cuma jalan kalau elemen startPop & startBtn beneran ada di HTML atas)
+    function showGateNow(){
+      gate.classList.add("show");
+      gate.setAttribute("aria-hidden","false");
+    }
+    if(startBtn && startPop){
+      startBtn.addEventListener("click", async () => {
+        await playStartMusicFromStart();
+
+        startPop.classList.add("hide");
+        setTimeout(() => {
+          startPop.classList.remove("show");
+          startPop.setAttribute("aria-hidden","true");
+        }, 380);
+
+        showGateNow();
+      });
     }
 
     // ===== Gate Open Click =====
@@ -1333,6 +1458,12 @@ async function startIndexBgmNow(){
         showGateAlert(CONFIG.lockedMessage);
         return;
       }
+
+      // ✅ stop myfinger pas masuk gate reveal
+      stopStartMusic();
+
+      // prime audio biar fixyou aman di mobile
+      try{ await primeIndexBgm(); }catch(_){}
 
       // reveal animation
       gateBody.classList.add("hiding");
@@ -1344,7 +1475,7 @@ async function startIndexBgmNow(){
       // photo love anim ON
       setLoving(true);
 
-      // play music gate
+      // play music gate (birthday.mp3)
       await playGateMusicFromStart(gateOpen);
 
       // typing
@@ -1367,22 +1498,24 @@ async function startIndexBgmNow(){
     });
 
     gateSkip.addEventListener("click", async (e) => {
-  e.preventDefault();
-  e.stopPropagation();
+      e.preventDefault();
+      e.stopPropagation();
 
-  // jangan biarin primeIndexBgm nge-crash klik skip di HP
-  try { await primeIndexBgm(); } catch(_) {}
+      // ✅ stop myfinger juga kalau user skip
+      stopStartMusic();
 
-  stopTyping();
-  setLoving(false);
+      try { await primeIndexBgm(); } catch(_) {}
 
-  try { 
-    bgm.pause(); 
-    bgm.currentTime = 0;
-  } catch(_) {}
+      stopTyping();
+      setLoving(false);
 
-  closeGate();
-});
+      try {
+        bgm.pause();
+        bgm.currentTime = 0;
+      } catch(_) {}
+
+      closeGate();
+    });
 
     // ===== Put config to UI =====
     const nameTop = document.getElementById("nameTop");
@@ -1439,7 +1572,6 @@ async function startIndexBgmNow(){
       overlay.classList.add("show");
       overlay.setAttribute("aria-hidden","false");
 
-      // typing surat
       letterTyping = true;
       letterText.textContent = "";
       await sleep(120);
@@ -1447,18 +1579,17 @@ async function startIndexBgmNow(){
         speedMs: CONFIG.letterTypingSpeedMs,
         jitter: CONFIG.letterTypingJitter
       });
-    });
 
-    document.getElementById("openLetter")?.addEventListener("click", () => {
-  startIndexBgmNow();
-});
+      // ✅ sekalian trigger bgm index kalau udah masuk index & user buka surat
+      startIndexBgmNow();
+    });
 
     function closeModal(){
       overlay.classList.remove("show");
       overlay.setAttribute("aria-hidden","true");
       stopTyping();
       letterTyping = false;
-      letterText.textContent = ""; // biar tiap buka ulang typing lagi
+      letterText.textContent = "";
     }
     document.getElementById("closeLetter").addEventListener("click", closeModal);
     overlay.addEventListener("click", (e) => { if(e.target === overlay) closeModal(); });
@@ -1477,7 +1608,7 @@ async function startIndexBgmNow(){
     const canvas = document.getElementById("confetti");
     const ctx = canvas.getContext("2d", { alpha:true });
 
-    let DPR = Math.max(1, Math.min(2, window.devicePixelRatio || 1)); // cap DPR biar ga ngeframe
+    let DPR = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
     let W = 0, H = 0;
 
     function resizeCanvas(){
@@ -1564,7 +1695,6 @@ async function startIndexBgmNow(){
       if(fwLooping) return;
       fwLooping = true;
 
-      // langsung meriah pas masuk index
       const initial = Math.max(2, Math.floor(3 * QUALITY));
       for(let i=0;i<initial;i++) spawnRocket();
 
@@ -1574,15 +1704,12 @@ async function startIndexBgmNow(){
     function fwLoop(){
       fwRAF = requestAnimationFrame(fwLoop);
 
-      // transparan biar nyatu sama background
       ctx.fillStyle = "rgba(0,0,0,0.10)";
       ctx.fillRect(0,0,W,H);
 
-      // spawn roket terus (looping)
       const chance = 0.18 * QUALITY;
       if(Math.random() < chance) spawnRocket();
 
-      // rockets
       for(let i=rockets.length-1;i>=0;i--){
         const r = rockets[i];
         r.x += r.vx;
@@ -1611,7 +1738,6 @@ async function startIndexBgmNow(){
         if(r.y > H + 80) rockets.splice(i,1);
       }
 
-      // sparks
       for(let i=sparks.length-1;i>=0;i--){
         const s = sparks[i];
         s.x += s.vx;
@@ -1633,11 +1759,10 @@ async function startIndexBgmNow(){
       }
     }
 
-    // init canvas clean
     ctx.clearRect(0,0,W,H);
 
-    // init gate button state
     setGateButtonState();
   </script>
 </body>
 </html>
+
