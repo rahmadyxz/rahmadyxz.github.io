@@ -97,15 +97,6 @@
       font-size: clamp(20px, 3.2vw, 28px);
       letter-spacing:-.3px;
     }
-    kbd{
-      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-      font-size:12px;
-      padding:4px 7px;
-      border-radius:10px;
-      border:1px solid rgba(255,255,255,.16);
-      background: rgba(0,0,0,.18);
-      color: rgba(255,255,255,.85);
-    }
 
     /* ===== Story Stage (9:16) ===== */
     .stageWrap{
@@ -254,42 +245,6 @@
     }
     .counter{color:var(--muted);font-size:13px}
 
-    /* ✅ Music pill button (mirip contoh lu) */
-    .musicBtn{
-      border:1px solid rgba(255,255,255,.18);
-      background: rgba(255,255,255,.06);
-      color: rgba(255,255,255,.92);
-      padding:10px 14px;
-      border-radius:999px;
-      font-weight:700;
-      cursor:pointer;
-      display:inline-flex;
-      align-items:center;
-      gap:10px;
-      backdrop-filter: blur(10px);
-      transition: transform .12s ease, filter .12s ease, box-shadow .2s ease;
-    }
-    .musicBtn:hover{filter:brightness(1.08)}
-    .musicBtn:active{transform:scale(.98)}
-
-    .musicIcon{
-      display:inline-block;
-      transform-origin:center;
-      transition: transform .15s ease, filter .15s ease;
-    }
-    .musicBtn.on{
-      box-shadow: 0 12px 28px rgba(255,94,168,.12);
-      border-color: rgba(255,255,255,.22);
-    }
-    .musicBtn.on .musicIcon{
-      animation: wiggle .9s ease-in-out infinite;
-      filter: drop-shadow(0 0 10px rgba(138,92,255,.25));
-    }
-    @keyframes wiggle{
-      0%,100%{transform: rotate(-8deg) scale(1.02)}
-      50%{transform: rotate(8deg) scale(1.02)}
-    }
-
     footer{
       width:min(980px, 100%);
       color: rgba(255,255,255,.55);
@@ -321,13 +276,6 @@
           </div>
           <div class="rightMeta">
             <button id="toggleAuto" class="primary">Auto: ON</button>
-
-            <!-- ✅ Play/Pause musik (pill) -->
-            <button id="musicBtn" class="musicBtn" type="button">
-              <span>Play musik</span>
-              <span class="musicIcon">🎵</span>
-            </button>
-
             <div class="counter" id="counter">1 / 1</div>
           </div>
         </div>
@@ -364,8 +312,8 @@
     <footer>Made with love 💗 @rahmadyxz</footer>
   </div>
 
-  <!-- ✅ AUDIO (GitHub Pages friendly) -->
-  <audio id="bgm" loop preload="auto">
+  <!-- ✅ AUDIO: AUTOPLAY + LOOP (monokrom.mp3) -->
+  <audio id="bgm" preload="auto" loop>
     <source src="monokrom.mp3" type="audio/mpeg" />
   </audio>
 
@@ -375,20 +323,17 @@
       toName: "Imelia Rinjani Az-Zahra",
       slideDurationMs: 4500,
       slides: [
-        { src: "images/1.jpg", title: "Foto 1", text: "Caption opsional..." },
-        { src: "images/2.jpg", title: "Foto 2", text: "Caption opsional..." },
-        { src: "images/3.jpg", title: "Foto 3", text: "Caption opsional..." },
-        { src: "images/4.jpg", title: "Foto 4", text: "Caption opsional..." },
-        { src: "images/5.jpg", title: "Foto 5", text: "Caption opsional..." },
-        { src: "images/6.jpg", title: "Foto 6", text: "Caption opsional..." },
-        { src: "images/7.jpg", title: "Foto 7", text: "Caption opsional..." },
-        { src: "images/8.jpg", title: "Foto 8", text: "Caption opsional..." },
-        { src: "images/9.jpg", title: "Foto 9", text: "Caption opsional..." },
-        { src: "images/10.jpg", title: "Foto 10", text: "Caption opsional..." },
+        { src: "images/1.jpg", title: "Foto 1" },
+        { src: "images/2.jpg", title: "Foto 2" },
+        { src: "images/3.jpg", title: "Foto 3" },
+        { src: "images/4.jpg", title: "Foto 4" },
+        { src: "images/5.jpg", title: "Foto 5" },
+        { src: "images/6.jpg", title: "Foto 6" },
+        { src: "images/7.jpg", title: "Foto 7" },
+        { src: "images/8.jpg", title: "Foto 8" },
+        { src: "images/9.jpg", title: "Foto 9" },
+        { src: "images/10.jpg", title: "Foto 10" },
       ],
-
-      // ✅ Musik
-      musicSrc: "monokrom.mp3",   // bisa ganti ke link mp3 langsung
       musicVolume: 0.5
     };
     /** ==================== */
@@ -611,69 +556,28 @@
     });
 
     // =========================
-    // ✅ MUSIC: Play/Pause + Save state + arm auto-play after any click
+    // ✅ MUSIC AUTOPLAY (monokrom.mp3) - no button
     // =========================
     const bgm = document.getElementById("bgm");
-    const musicBtn = document.getElementById("musicBtn");
-    const musicBtnText = musicBtn.querySelector("span");
-    const sourceEl = bgm.querySelector("source");
-
-    const LS_KEY = "hb_music_on";
-
-    // apply src + volume
-    if(sourceEl && CONFIG.musicSrc) sourceEl.setAttribute("src", CONFIG.musicSrc);
-    bgm.load();
     bgm.volume = typeof CONFIG.musicVolume === "number" ? CONFIG.musicVolume : 0.5;
 
-    let musicOn = localStorage.getItem(LS_KEY) === "1";
-
-    function setMusicUI(){
-      musicBtn.classList.toggle("on", musicOn);
-      musicBtnText.textContent = musicOn ? "Pause musik" : "Play musik";
-    }
-    setMusicUI();
-
-    async function playMusic(){
-      const src = sourceEl?.getAttribute("src") || "";
-      if(!src){
-        alert("Isi dulu musicSrc / source src mp3 ya 🎵");
-        return;
-      }
+    async function tryPlayMusic(){
       try{
         await bgm.play();
-        musicOn = true;
-        localStorage.setItem(LS_KEY, "1");
-        setMusicUI();
       }catch(e){
-        // autoplay blocked until user gesture
-        musicOn = false;
-        localStorage.setItem(LS_KEY, "0");
-        setMusicUI();
-        alert("Browser ngeblok autoplay 😄 Klik tombol Play musik lagi ya.");
+        // fallback buat mobile: nyala pas user gesture pertama (tap/scroll)
+        const arm = async () => {
+          window.removeEventListener("pointerdown", arm);
+          window.removeEventListener("touchstart", arm);
+          window.removeEventListener("scroll", arm);
+          try{ await bgm.play(); }catch(_){}
+        };
+        window.addEventListener("pointerdown", arm, { once:true });
+        window.addEventListener("touchstart", arm, { once:true, passive:true });
+        window.addEventListener("scroll", arm, { once:true, passive:true });
       }
     }
-
-    function pauseMusic(){
-      bgm.pause();
-      musicOn = false;
-      localStorage.setItem(LS_KEY, "0");
-      setMusicUI();
-    }
-
-    musicBtn.addEventListener("click", async () => {
-      if(!musicOn) await playMusic();
-      else pauseMusic();
-    });
-
-    // ✅ Kalau sebelumnya user udah ON, begitu dia klik/tap apa aja sekali, kita coba play otomatis.
-    // Ini bikin pengalaman enak di GitHub Pages tanpa melanggar autoplay policy.
-    if(musicOn){
-      const armOnce = async () => {
-        window.removeEventListener("pointerdown", armOnce);
-        await playMusic();
-      };
-      window.addEventListener("pointerdown", armOnce, { once:true });
-    }
+    tryPlayMusic();
 
     // Init
     if(!slides.length){
