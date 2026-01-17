@@ -322,14 +322,45 @@
       box-shadow:none;
       background: rgba(255,255,255,.04);
     }
-    .modal .content{padding:22px 18px 18px}
-    .letter{
-      line-height:1.75;
-      color: rgba(255,255,255,.88);
-      font-size: 15px;
-      white-space:pre-wrap;
-      cursor: pointer;
-    }
+    .modal .content{
+  padding:22px 18px 18px;
+  max-height: 52vh;          /* ✅ tinggi card surat (setengah layar) */
+  overflow-y: auto;           /* ✅ scroll di dalam card */
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;   /* ✅ biar layout gak geser pas scrollbar muncul */
+}
+
+/* isi surat */
+.letter{
+  line-height:1.75;
+  color: rgba(255,255,255,.88);
+  font-size: 15px;
+  white-space: pre-wrap;
+}
+
+/* ✅ scrollbar (Chrome/Edge/Safari) */
+.modal .content::-webkit-scrollbar{
+  width: 10px;
+}
+.modal .content::-webkit-scrollbar-track{
+  background: rgba(255,255,255,.06);
+  border-radius: 999px;
+}
+.modal .content::-webkit-scrollbar-thumb{
+  background: rgba(255,255,255,.22);
+  border-radius: 999px;
+  border: 2px solid rgba(0,0,0,0);
+  background-clip: padding-box;
+}
+.modal .content::-webkit-scrollbar-thumb:hover{
+  background: rgba(255,255,255,.28);
+}
+
+/* ✅ scrollbar (Firefox) */
+.modal .content{
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,.22) rgba(255,255,255,.06);
+}
     .modal .footer{
       display:flex; gap:10px; justify-content:flex-end;
       padding: 0 18px 18px;
@@ -818,9 +849,11 @@
           <div class="pad">
             <h2 style="margin:0 0 6px 0; font-size:18px;">Harapan aku buat kamu</h2>
             <ul id="wishList" style="margin:10px 0 0 18px; color:var(--muted); line-height:1.7;">
-  <li data-text="Semoga sehat, tenang, dan makin sayang sama diri sendiri."></li>
-  <li data-text="Semoga yang kamu usahain pelan-pelan jadi nyata."></li>
-  <li data-text="Semoga kita bisa ketawa bareng lebih sering."></li>
+  <li data-text="Semoga kamu selalu sehat dan penuh senyum."></li>
+  <li data-text="Semoga hatimu selalu ringan dan tenang."></li>
+  <li data-text="Semoga semua mimpi kecilmu satu per satu jadi nyata."></li>
+  <li data-text="Semoga kamu selalu merasa cukup dan dicintai."></li>
+  <li data-text="Dan semoga hari ini, kamu benar-benar bahagia 🤍"></li>
 </ul>
           </div>
         </section>
@@ -853,7 +886,7 @@
         <div class="brand">
           <span class="dot"></span>
           <div>
-            <div>Surat buat <span id="nameLetter">Imelia Rinjani Az-Zahra</span></div>
+            <div>Untuk : <span id="nameLetter">Imelia Rinjani Az-Zahra</span></div>
             <div class="mini" id="dateLetter">—</div>
           </div>
         </div>
@@ -882,11 +915,85 @@
       letter:
 `Hai kamu 💖
 
-Selamat ulang tahun ya. Makasih udah jadi kamu—yang kadang cerewet, kadang lucu, tapi selalu bikin aku ngerasa “rumah”.
-Semoga di umur baru ini kamu makin bahagia, makin kuat, dan makin dikelilingi hal-hal baik.
+Selamat ulang tahun, ya.
+Aku nulis ini di tanggal 15 Januari 2026,
+aku nulis ini H-2 sebelum kamu & fatim lomba fashion show di TangCity.
+air mata aku netes perlahan, karna teringat pertama kali kita bertemu.
+Di saat hubungan kita lagi di titik yang… aku sendiri nggak tau harus nyebutnya apa.
+Hubungan kita hari ini ( 6 Februari ) gimana ya? hehe.
+Masih “kita”, atau cuma dua orang yang sama-sama takut kehilangan?.
+
+Aku bikin surat ini sambil mikir,
+sambil sesekali berhenti karena dada terasa sesak,
+kalau nanti kamu baca di tanggal 6 Februari,
+aku masih di hidup kamu atau nggak.
+Masih kamu tunggu, atau cuma aku yang nunggu.
+
+Tapi satu hal yang pasti,
+di saat aku nulis ini,
+aku masih sayang kamu.
+Masih mikirin kamu sebelum tidur,
+masih pengen kamu bahagia, walaupun kadang aku ngerasa aku bukan orang yang bikin kamu bahagia lagi.
+
+Terima kasih sudah jadi kamu.
+Yang kadang cerewet, kadang lucu,
+tapi selalu berhasil bikin aku ngerasa punya rumah…
+walaupun sekarang aku nggak tau,
+rumah itu masih milik aku atau nggak.
+
+Dan aku mau bilang satu hal yang mungkin nggak pernah kamu tau sepenuhnya…
+makasih ya, karena kamu udah bikin aku berani jatuh cinta lagi,
+setelah lima tahun lamanya aku nutup hati.
+Hati yang sudah lama berkarat,
+yang aku kira nggak akan bisa kebuka lagi.
+
+Tapi waktu kamu datang di hidup aku,
+kamu pelan-pelan buka pintu itu…
+tanpa sadar, kamu bikin aku percaya lagi sama rasa.
+
+Kalau nanti ternyata kita sudah berjalan di jalan masing-masing,
+aku cuma mau kamu tahu…
+aku nggak pernah nyesel pernah milih kamu.
+Aku cuma sedih karena nggak bisa lebih kuat buat kita.
+
+Dan satu hal yang pengen aku bilang dari hati paling jujur:
+maaf ya… kalau caraku mencintai kamu malah bikin kamu capek sendiri.
+Maaf kalau rasa sayangku kadang jadi beban,
+kalau perhatianku terasa menekan,
+kalau kehadiranku nggak selalu jadi tempat pulang yang tenang buat kamu.
+
+Aku nggak pernah berniat nyakitin kamu.
+Aku cuma nggak tau caranya mencintai tanpa takut kehilangan.
+
+Dan mungkin sekarang…
+aku juga harus berterima kasih,
+karena kamu pernah ngasih luka yang begitu dalam,
+sampai akhirnya aku memutuskan
+untuk menutup pintu hati aku lagi.
+
+Bukan karena aku benci kamu,
+tapi karena aku terlalu sayang sampai lupa cara jaga diri sendiri.
+
+Jaga diri kamu ya, cantik.
+Jangan sering begadang, jangan lupa makan,
+dan tolong… jangan pernah ngerasa kamu nggak cukup.
+Di mata aku, kamu selalu cukup.
 
 Aku bangga sama kamu.
-Dan aku sayang kamu, banyak. 💖
+Dan di titik hidup manapun aku berada nanti,
+kamu tetap jadi bagian cerita paling lembut yang pernah aku punya.
+
+Kalau suatu hari kamu kangen aku,
+ingat...
+aku pernah menyayangi kamu dengan penuh,
+walaupun akhirnya harus ngelepas pelan-pelan.
+
+Aku akan tetap nepatin janji aku dulu:
+kita akan tetap pergi ke Aquarium Date Bulan April nanti.
+
+Selamat ulang tahun yaa cantikkk.
+Semoga kamu selalu bahagia…
+meskipun mungkin bukan lagi sama aku 💖
 
 — @rahmadyxz`,
 
@@ -1340,16 +1447,6 @@ async function startIndexBgmNow(){
   startIndexBgmNow();
 });
 
-    // tap untuk skip typing surat
-    letterText.addEventListener("click", () => {
-      if(!letterTyping) return;
-      stopTyping();
-      const span = letterText.querySelector(".txt");
-      if(span) span.textContent = CONFIG.letter;
-      else letterText.textContent = CONFIG.letter;
-      letterTyping = false;
-    });
-
     function closeModal(){
       overlay.classList.remove("show");
       overlay.setAttribute("aria-hidden","true");
@@ -1538,4 +1635,3 @@ async function startIndexBgmNow(){
   </script>
 </body>
 </html>
-
