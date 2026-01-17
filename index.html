@@ -1253,13 +1253,23 @@ async function startIndexBgmNow(){
       await playGateMusicFromStart(gateOpen);
     });
 
-    gateSkip.addEventListener("click", async () => {
-      await primeIndexBgm();
-      stopTyping();
-      setLoving(false);
-      bgm.pause();
-      closeGate();
-    });
+    gateSkip.addEventListener("click", async (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+
+  // jangan biarin primeIndexBgm nge-crash klik skip di HP
+  try { await primeIndexBgm(); } catch(_) {}
+
+  stopTyping();
+  setLoving(false);
+
+  try { 
+    bgm.pause(); 
+    bgm.currentTime = 0;
+  } catch(_) {}
+
+  closeGate();
+});
 
     // ===== Put config to UI =====
     const nameTop = document.getElementById("nameTop");
