@@ -1128,6 +1128,12 @@ meskipun mungkin bukan lagi sama aku 💖
       for(let i=0;i<text.length;i++){
         if(typingAbort.stop) break;
         txt.textContent += text[i];
+
+// auto scroll mengikuti typing
+const wrap = el.closest(".content");
+if(wrap){
+  wrap.scrollTop = wrap.scrollHeight;
+}
         await sleep(speed + Math.random()*jitter);
       }
 
