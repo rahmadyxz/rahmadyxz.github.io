@@ -1165,29 +1165,27 @@ Dan aku sayang kamu, banyak. 💖
 
     // 👉 penting: supaya lagu index bisa nyala otomatis pas gate ilang,
     // kita "prime" dulu saat user tap (gateOpen / gateSkip)
-    let indexPrimed = false;
-    async function primeIndexBgm(){
-      if(indexPrimed) return true;
-      try{
-        bgmIndex.pause();
-        bgmIndex.currentTime = 0;
-      }catch(e){}
-      bgmIndex.volume = 0;
-      try{
-        await bgmIndex.play();  // start muted (dianggap sudah ada user gesture)
-        indexPrimed = true;
-        return true;
-      }catch(e){
-        indexPrimed = false;
-        return false;
-      }
-    }
+    let indexStarted = false;
 
-    function startIndexBgmNow(){
-      if(!indexPrimed) return; // kalau ga keprime ya ga maksa
-      try{ bgmIndex.currentTime = 0; }catch(e){}
-      fadeVolumeEl(bgmIndex, CONFIG.indexMusicVolume ?? 0.55, CONFIG.indexMusicFadeInMs || 1400);
-    }
+async function startIndexBgmNow(){
+  if(indexStarted) return;
+  indexStarted = true;
+
+  try{
+    bgmIndex.pause();
+    bgmIndex.currentTime = 0;
+  }catch(e){}
+
+  bgmIndex.volume = 0;
+
+  try{
+    await bgmIndex.play(); // FIXYOU BARU MULAI DI SINI
+    fadeVolumeEl(bgmIndex, CONFIG.indexMusicVolume ?? 0.55, CONFIG.indexMusicFadeInMs || 1400);
+  }catch(e){
+    // Kalau HP ngeblok autoplay, ya udah — nanti bisa kita trigger via tombol lain
+    indexStarted = false;
+  }
+}
 
     // ===== Close gate -> baru mulai fireworks + lagu index =====
     let enteredIndexOnce = false;
@@ -1222,9 +1220,6 @@ Dan aku sayang kamu, banyak. 💖
         showGateAlert(CONFIG.lockedMessage);
         return;
       }
-
-      // prime lagu index biar nanti aman autoplay pas gate ilang
-      await primeIndexBgm();
 
       // reveal animation
       gateBody.classList.add("hiding");
@@ -1330,6 +1325,10 @@ Dan aku sayang kamu, banyak. 💖
         jitter: CONFIG.letterTypingJitter
       });
     });
+
+    document.getElementById("openLetter")?.addEventListener("click", () => {
+  startIndexBgmNow();
+});
 
     // tap untuk skip typing surat
     letterText.addEventListener("click", () => {
