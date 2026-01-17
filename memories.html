@@ -98,6 +98,24 @@
       letter-spacing:-.3px;
     }
 
+    /* ✅ GIF di judul (2-3 gif) */
+    .titleGifs{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      margin-top:8px;
+      flex-wrap:wrap;
+    }
+    .titleGifs img{
+      width:54px;
+      height:54px;
+      border-radius:14px;
+      object-fit:cover;
+      border:1px solid rgba(255,255,255,.14);
+      filter: drop-shadow(0 6px 14px rgba(0,0,0,.35));
+      opacity:.95;
+    }
+
     /* ===== Story Stage (9:16) ===== */
     .stageWrap{
       display:flex;
@@ -272,6 +290,14 @@
         <div class="titleRow">
           <div>
             <h1>Album kecil kita 🙌🏻</h1>
+
+            <!-- ✅ 2-3 GIF di bawah judul -->
+            <div class="titleGifs" aria-label="gif row">
+              <img src="https://media.tenor.com/RGsJYjA5gOsAAAAj/peach-goma.gif" alt="gif 1" loading="lazy" decoding="async" />
+              <img src="https://media.tenor.com/GgOmrYFNGMcAAAAj/peach-goma.gif" alt="gif 2" loading="lazy" decoding="async" />
+              <img src="https://media.tenor.com/v63_brUy45wAAAAj/peach-goma-love-peach-cat.gif" alt="gif 3" loading="lazy" decoding="async" />
+            </div>
+
             <div class="mini"></div>
           </div>
           <div class="rightMeta">
