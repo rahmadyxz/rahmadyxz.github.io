@@ -177,11 +177,11 @@
         gif: "https://media.tenor.com/4IgTeDd8hpkAAAAi/hii.gif"
       },
       {
-        text: "Masih belum 😆 satu lagi ya",
+        text: "Maaf kalau hadiahnya biasa aja 🥺😔",
         gif: "https://media.tenor.com/rVkYaklPAG8AAAAj/%EB%AA%A8%EC%B0%8C%EB%83%A5.gif"
       },
       {
-        text: "Nah sekarang beneran 💖",
+        text: "Semoga nanti suka sama hadiahnya 💖",
         gif: "https://media.tenor.com/zT6sL283R3wAAAAj/gift-present.gif"
       }
     ];
@@ -217,7 +217,7 @@
     }
 
     // set WA link
-    const waUrl = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent("aku mau hadiah dong 😝")}`;
+    const waUrl = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent("MANA KADONYA WOIII 🫴🏻")}`;
     waLink.href = waUrl;
 
     let step = 0;
@@ -240,9 +240,9 @@
       if(step >= STEPS.length - 1){
         giftBtn.style.display = "none";
         waLink.style.display = "inline-block";
-        miniHint.textContent = "Klik tombol di atas untuk chat aku ya 💬";
+        miniHint.textContent = "Klik tombol di atas untuk ambil hadiahnya 🎁";
       } else {
-        giftBtn.textContent = (step === 0) ? "Hadiah lagi 🎁" : "Kado lagi 🎁";
+        giftBtn.textContent = (step === 0) ? "Hadiah lagi 🎁" : "Klik lagi 🎁";
       }
 
       step++;
