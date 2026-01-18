@@ -650,9 +650,9 @@
       iframe.src = embed;
       iframe.allow = "autoplay; encrypted-media; fullscreen; picture-in-picture";
       iframe.allowFullscreen = true;
-      iframe.referrerPolicy = "no-referrer-when-downgrade";
+      iframe.referrerPolic
 
-      let loaded = false;
+    let loaded = false;
       iframe.addEventListener("load", () => { loaded = true; });
 
       stage.appendChild(iframe);
