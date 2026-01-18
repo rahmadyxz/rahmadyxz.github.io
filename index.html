@@ -1375,85 +1375,105 @@ meskipun mungkin bukan lagi sama aku 💖
       try{ bgmStart.pause(); bgmStart.currentTime = 0; }catch(_){}
     }
 
-    // ✅ prime audio biar mobile gak ngeblok (FIX ERROR primeIndexBgm undefined)
-    let primed = false;
-    async function primeIndexBgm(){
-      if(primed) return;
-      primed = true;
+// ✅ prime audio biar mobile gak ngeblok (lebih aman: mute + pause di next tick)
+let primed = false;
+async function primeIndexBgm(){
+  if(primed) return;
+  primed = true;
+
+  try{
+    // mute biar gak ada kemungkinan "nyelip bunyi"
+    bgmIndex.muted = true;
+    bgmIndex.volume = 0;
+
+    // iOS / mobile safety
+    bgmIndex.playsInline = true;
+    bgmIndex.setAttribute("playsinline", "");
+
+    const p = bgmIndex.play();
+
+    // kalau browser ngembaliin promise, tunggu sebentar lalu pause
+    if(p && typeof p.then === "function"){
+      await p;
+    }
+
+    // pause di frame berikutnya biar audio context ke-unlock tapi gak jalan
+    requestAnimationFrame(() => {
       try{
-        // "unlock" audio context: play-pause cepat (tanpa bunyi)
-        bgmIndex.volume = 0;
-        await bgmIndex.play();
         bgmIndex.pause();
         bgmIndex.currentTime = 0;
       }catch(_){}
+    });
+  }catch(_){}
+}
+
+// 👉 penting: supaya lagu index bisa nyala otomatis pas gate ilang,
+// kita "prime" dulu saat user tap (gateOpen / gateSkip)
+let indexStarted = false;
+
+async function startIndexBgmNow(){
+  if(indexStarted) return;
+  indexStarted = true;
+
+  try{
+    bgmIndex.pause();
+    bgmIndex.currentTime = 0;
+  }catch(e){}
+
+  // unmute pas mau beneran play
+  bgmIndex.muted = false;
+  bgmIndex.volume = 0;
+
+  try{
+    await bgmIndex.play(); // FIXYOU BARU MULAI DI SINI
+    fadeVolumeEl(bgmIndex, CONFIG.indexMusicVolume ?? 0.55, CONFIG.indexMusicFadeInMs || 1400);
+  }catch(e){
+    indexStarted = false;
+  }
+}
+
+// ===== Close gate -> baru mulai fireworks + lagu index =====
+let enteredIndexOnce = false;
+function closeGate(){
+  gate.classList.add("exiting");
+  setTimeout(() => {
+    gate.classList.remove("show");
+    gate.classList.remove("exiting");
+    gate.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("gated");
+
+    typeList(document.getElementById("wishList"), {
+      speedMs: 24,
+      jitter: 14
+    });
+
+    if(!enteredIndexOnce){
+      enteredIndexOnce = true;
+      startFireworksLoop();
+      startIndexBgmNow();
     }
+  }, 780);
+}
 
-    // 👉 penting: supaya lagu index bisa nyala otomatis pas gate ilang,
-    // kita "prime" dulu saat user tap (gateOpen / gateSkip)
-    let indexStarted = false;
+// ✅ START POPUP FLOW: klik Mulai -> play myfinger -> popup hilang -> gate tampil
+// (ini cuma jalan kalau elemen startPop & startBtn beneran ada di HTML atas)
+function showGateNow(){
+  gate.classList.add("show");
+  gate.setAttribute("aria-hidden","false");
+}
+if(startBtn && startPop){
+  startBtn.addEventListener("click", async () => {
+    await playStartMusicFromStart();
 
-    async function startIndexBgmNow(){
-      if(indexStarted) return;
-      indexStarted = true;
+    startPop.classList.add("hide");
+    setTimeout(() => {
+      startPop.classList.remove("show");
+      startPop.setAttribute("aria-hidden","true");
+    }, 380);
 
-      try{
-        bgmIndex.pause();
-        bgmIndex.currentTime = 0;
-      }catch(e){}
-
-      bgmIndex.volume = 0;
-
-      try{
-        await bgmIndex.play(); // FIXYOU BARU MULAI DI SINI
-        fadeVolumeEl(bgmIndex, CONFIG.indexMusicVolume ?? 0.55, CONFIG.indexMusicFadeInMs || 1400);
-      }catch(e){
-        indexStarted = false;
-      }
-    }
-
-    // ===== Close gate -> baru mulai fireworks + lagu index =====
-    let enteredIndexOnce = false;
-    function closeGate(){
-      gate.classList.add("exiting");
-      setTimeout(() => {
-        gate.classList.remove("show");
-        gate.classList.remove("exiting");
-        gate.setAttribute("aria-hidden", "true");
-        document.body.classList.remove("gated");
-
-        typeList(document.getElementById("wishList"), {
-          speedMs: 24,
-          jitter: 14
-        });
-
-        if(!enteredIndexOnce){
-          enteredIndexOnce = true;
-          startFireworksLoop();
-          startIndexBgmNow();
-        }
-      }, 780);
-    }
-
-    // ✅ START POPUP FLOW: klik Mulai -> play myfinger -> popup hilang -> gate tampil
-    // (ini cuma jalan kalau elemen startPop & startBtn beneran ada di HTML atas)
-    function showGateNow(){
-      gate.classList.add("show");
-      gate.setAttribute("aria-hidden","false");
-    }
-    if(startBtn && startPop){
-      startBtn.addEventListener("click", async () => {
-        await playStartMusicFromStart();
-
-        startPop.classList.add("hide");
-        setTimeout(() => {
-          startPop.classList.remove("show");
-          startPop.setAttribute("aria-hidden","true");
-        }, 380);
-
-        showGateNow();
-      });
-    }
+    showGateNow();
+  });
+}
 
 // ===== Gate Open Click =====
 gateOpen.addEventListener("click", async () => {
@@ -1466,11 +1486,12 @@ gateOpen.addEventListener("click", async () => {
   // ✅ stop myfinger pas masuk gate reveal
   stopStartMusic();
 
-  // ✅ FIX: pastiin fixyou bener-bener mati biar gak nabrak sama birthday
+  // ✅ HARD-KILL fixyou sebelum birthday mulai (ini yang paling penting)
   try{
     bgmIndex.pause();
     bgmIndex.currentTime = 0;
     bgmIndex.volume = 0;
+    bgmIndex.muted = true;
   }catch(_){}
   indexStarted = false;
 
@@ -1486,6 +1507,15 @@ gateOpen.addEventListener("click", async () => {
 
   // photo love anim ON
   setLoving(true);
+
+  // ✅ extra hard-kill lagi sebelum play birthday (anti HP aneh)
+  try{
+    bgmIndex.pause();
+    bgmIndex.currentTime = 0;
+    bgmIndex.volume = 0;
+    bgmIndex.muted = true;
+  }catch(_){}
+  indexStarted = false;
 
   // play music gate (birthday.mp3)
   await playGateMusicFromStart(gateOpen);
@@ -1511,6 +1541,7 @@ gateReplay.addEventListener("click", async () => {
     bgmIndex.pause();
     bgmIndex.currentTime = 0;
     bgmIndex.volume = 0;
+    bgmIndex.muted = true;
   }catch(_){}
   indexStarted = false;
 
@@ -1529,6 +1560,7 @@ gateSkip.addEventListener("click", async (e) => {
     bgmIndex.pause();
     bgmIndex.currentTime = 0;
     bgmIndex.volume = 0;
+    bgmIndex.muted = true;
   }catch(_){}
   indexStarted = false;
 
@@ -1545,72 +1577,73 @@ gateSkip.addEventListener("click", async (e) => {
   closeGate();
 });
 
-    // ===== Put config to UI =====
-    const nameTop = document.getElementById("nameTop");
-    const nameHero = document.getElementById("nameHero");
-    const nameLetter = document.getElementById("nameLetter");
-    const fromTop = document.getElementById("fromTop");
-    const tagline = document.getElementById("tagline");
-    const subtitle = document.getElementById("subtitle");
-    const ageChip = document.getElementById("ageChip");
-    const dateTop = document.getElementById("dateTop");
-    const dateLetter = document.getElementById("dateLetter");
+// ===== Put config to UI =====
+const nameTop = document.getElementById("nameTop");
+const nameHero = document.getElementById("nameHero");
+const nameLetter = document.getElementById("nameLetter");
+const fromTop = document.getElementById("fromTop");
+const tagline = document.getElementById("tagline");
+const subtitle = document.getElementById("subtitle");
+const ageChip = document.getElementById("ageChip");
+const dateTop = document.getElementById("dateTop");
+const dateLetter = document.getElementById("dateLetter");
 
-    nameTop.textContent = CONFIG.toName;
-    nameHero.textContent = CONFIG.toName;
-    nameLetter.textContent = CONFIG.toName;
-    fromTop.textContent = CONFIG.fromName;
-    tagline.textContent = CONFIG.tagline;
-    subtitle.textContent = CONFIG.subtitle;
-    ageChip.textContent = CONFIG.age;
+nameTop.textContent = CONFIG.toName;
+nameHero.textContent = CONFIG.toName;
+nameLetter.textContent = CONFIG.toName;
+fromTop.textContent = CONFIG.fromName;
+tagline.textContent = CONFIG.tagline;
+subtitle.textContent = CONFIG.subtitle;
+ageChip.textContent = CONFIG.age;
 
-    // header dates pakai tanggal config (bukan next year)
-    dateTop.textContent = fmtDateID(targetDate);
-    dateLetter.textContent = fmtDateID(targetDate);
+// header dates pakai tanggal config (bukan next year)
+dateTop.textContent = fmtDateID(targetDate);
+dateLetter.textContent = fmtDateID(targetDate);
 
-    // ===== Hearts background =====
-    const hearts = document.getElementById("hearts");
-    function spawnHearts(){
-      const n = 18;
-      hearts.innerHTML = "";
-      for(let i=0;i<n;i++){
-        const el = document.createElement("div");
-        el.className = "heart";
-        const left = Math.random()*100;
-        const dur = 6 + Math.random()*10;
-        const delay = Math.random()*4;
-        const size = 10 + Math.random()*14;
-        el.style.left = left + "vw";
-        el.style.bottom = (-20 - Math.random()*40) + "vh";
-        el.style.animationDuration = dur + "s";
-        el.style.animationDelay = delay + "s";
-        el.style.width = size + "px";
-        el.style.height = size + "px";
-        hearts.appendChild(el);
-      }
-    }
-    spawnHearts();
+// ===== Hearts background =====
+const hearts = document.getElementById("hearts");
+function spawnHearts(){
+  const n = 18;
+  hearts.innerHTML = "";
+  for(let i=0;i<n;i++){
+    const el = document.createElement("div");
+    el.className = "heart";
+    const left = Math.random()*100;
+    const dur = 6 + Math.random()*10;
+    const delay = Math.random()*4;
+    const size = 10 + Math.random()*14;
+    el.style.left = left + "vw";
+    el.style.bottom = (-20 - Math.random()*40) + "vh";
+    el.style.animationDuration = dur + "s";
+    el.style.animationDelay = delay + "s";
+    el.style.width = size + "px";
+    el.style.height = size + "px";
+    hearts.appendChild(el);
+  }
+}
+spawnHearts();
 
-    // ===== Letter modal (typing) =====
-    const overlay = document.getElementById("overlay");
-    const letterText = document.getElementById("letterText");
-    let letterTyping = false;
+// ===== Letter modal (typing) =====
+const overlay = document.getElementById("overlay");
+const letterText = document.getElementById("letterText");
+let letterTyping = false;
 
-    document.getElementById("openLetter").addEventListener("click", async () => {
-      overlay.classList.add("show");
-      overlay.setAttribute("aria-hidden","false");
+document.getElementById("openLetter").addEventListener("click", async () => {
+  overlay.classList.add("show");
+  overlay.setAttribute("aria-hidden","false");
 
-      letterTyping = true;
-      letterText.textContent = "";
-      await sleep(120);
-      typeText(letterText, CONFIG.letter, {
-        speedMs: CONFIG.letterTypingSpeedMs,
-        jitter: CONFIG.letterTypingJitter
-      });
+  letterTyping = true;
+  letterText.textContent = "";
+  await sleep(120);
+  typeText(letterText, CONFIG.letter, {
+    speedMs: CONFIG.letterTypingSpeedMs,
+    jitter: CONFIG.letterTypingJitter
+  });
 
-      // ✅ sekalian trigger bgm index kalau udah masuk index & user buka surat
-      startIndexBgmNow();
-    });
+  // ❌ HAPUS INI BIAR FIXYOU GA NYALA PAS BIRTHDAY MASIH MAIN
+  // startIndexBgmNow();
+});
+
 
     function closeModal(){
       overlay.classList.remove("show");
