@@ -915,6 +915,7 @@
             <a class="btn ghost" href="memories.html">Lihat foto 📷</a>
             <a class="btn ghost" href="video.html">Lihat video 📷</a>
             <a class="btn ghost" href="gift.html">Mau hadiah nda? 🎁</a>
+            <button class="primary" id="openLetter">Buka surat 💌</button>
           </div>
 
           <div class="tiny">
@@ -988,14 +989,14 @@
       toName: "Imelia Rinjani Az-Zahra",
       fromName: "",
       tagline: "“happy birthday, my favorite person.”",
-      birthday: "2026-01-18", // full date
+      birthday: "2026-01-06", // full date
       age: "18",
       subtitle:
         "Hari ini bukan cuma ulang tahun kamu—ini hari spesial yang bikin dunia jadi sedikit lebih manis. Aku bikin halaman kecil ini biar kamu bisa senyum setiap kali buka.",
       letter:
 `Hai kamu 💖
 
-Selamat ulang tahun, ya.
+Selamat ulang tahun ya 💖.
 Aku nulis ini di tanggal 15 Januari 2026,
 aku nulis ini H-2 sebelum kamu ke acara lomba fashion show di TangCity.
 air mata aku netes perlahan, karna teringat pertama kali kita bertemu.
@@ -1454,71 +1455,95 @@ meskipun mungkin bukan lagi sama aku 💖
       });
     }
 
-    // ===== Gate Open Click =====
-    gateOpen.addEventListener("click", async () => {
-      const allowed = isUnlockedNow(CONFIG.birthday);
-      if(!allowed){
-        showGateAlert(CONFIG.lockedMessage);
-        return;
-      }
+// ===== Gate Open Click =====
+gateOpen.addEventListener("click", async () => {
+  const allowed = isUnlockedNow(CONFIG.birthday);
+  if(!allowed){
+    showGateAlert(CONFIG.lockedMessage);
+    return;
+  }
 
-      // ✅ stop myfinger pas masuk gate reveal
-      stopStartMusic();
+  // ✅ stop myfinger pas masuk gate reveal
+  stopStartMusic();
 
-      // prime audio biar fixyou aman di mobile
-      try{ await primeIndexBgm(); }catch(_){}
+  // ✅ FIX: pastiin fixyou bener-bener mati biar gak nabrak sama birthday
+  try{
+    bgmIndex.pause();
+    bgmIndex.currentTime = 0;
+    bgmIndex.volume = 0;
+  }catch(_){}
+  indexStarted = false;
 
-      // reveal animation
-      gateBody.classList.add("hiding");
-      gateReveal.classList.remove("hidden");
-      void gateReveal.offsetHeight;
-      gateReveal.classList.add("showing");
-      setTimeout(() => { gateBody.style.display = "none"; }, 460);
+  // prime audio biar fixyou aman di mobile (unlock permission doang)
+  try{ await primeIndexBgm(); }catch(_){}
 
-      // photo love anim ON
-      setLoving(true);
+  // reveal animation
+  gateBody.classList.add("hiding");
+  gateReveal.classList.remove("hidden");
+  void gateReveal.offsetHeight;
+  gateReveal.classList.add("showing");
+  setTimeout(() => { gateBody.style.display = "none"; }, 460);
 
-      // play music gate (birthday.mp3)
-      await playGateMusicFromStart(gateOpen);
+  // photo love anim ON
+  setLoving(true);
 
-      // typing
-      gateTextEl.textContent = "";
-      await sleep(CONFIG.typingStartDelayMs || 200);
-      typeText(gateTextEl, CONFIG.gateMessage, {
-        speedMs: CONFIG.typingSpeedMs,
-        jitter: CONFIG.typingRandomJitter
-      });
+  // play music gate (birthday.mp3)
+  await playGateMusicFromStart(gateOpen);
 
-      // auto close when finished
-      bgm.onended = () => {
-        setLoving(false);
-        closeGate();
-      };
-    });
+  // typing
+  gateTextEl.textContent = "";
+  await sleep(CONFIG.typingStartDelayMs || 200);
+  typeText(gateTextEl, CONFIG.gateMessage, {
+    speedMs: CONFIG.typingSpeedMs,
+    jitter: CONFIG.typingRandomJitter
+  });
 
-    gateReplay.addEventListener("click", async () => {
-      await playGateMusicFromStart(gateOpen);
-    });
+  // auto close when finished
+  bgm.onended = () => {
+    setLoving(false);
+    closeGate();
+  };
+});
 
-    gateSkip.addEventListener("click", async (e) => {
-      e.preventDefault();
-      e.stopPropagation();
+gateReplay.addEventListener("click", async () => {
+  // ✅ biar aman: kalau user replay pas fixyou lagi nyala
+  try{
+    bgmIndex.pause();
+    bgmIndex.currentTime = 0;
+    bgmIndex.volume = 0;
+  }catch(_){}
+  indexStarted = false;
 
-      // ✅ stop myfinger juga kalau user skip
-      stopStartMusic();
+  await playGateMusicFromStart(gateOpen);
+});
 
-      try { await primeIndexBgm(); } catch(_) {}
+gateSkip.addEventListener("click", async (e) => {
+  e.preventDefault();
+  e.stopPropagation();
 
-      stopTyping();
-      setLoving(false);
+  // ✅ stop myfinger juga kalau user skip
+  stopStartMusic();
 
-      try {
-        bgm.pause();
-        bgm.currentTime = 0;
-      } catch(_) {}
+  // ✅ FIX: pastiin fixyou mati juga kalau user skip
+  try{
+    bgmIndex.pause();
+    bgmIndex.currentTime = 0;
+    bgmIndex.volume = 0;
+  }catch(_){}
+  indexStarted = false;
 
-      closeGate();
-    });
+  try { await primeIndexBgm(); } catch(_) {}
+
+  stopTyping();
+  setLoving(false);
+
+  try {
+    bgm.pause();
+    bgm.currentTime = 0;
+  } catch(_) {}
+
+  closeGate();
+});
 
     // ===== Put config to UI =====
     const nameTop = document.getElementById("nameTop");
@@ -1768,7 +1793,4 @@ meskipun mungkin bukan lagi sama aku 💖
   </script>
 </body>
 </html>
-
-
-
 
