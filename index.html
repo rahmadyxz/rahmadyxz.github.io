@@ -264,72 +264,60 @@
       max-width: 260px;
     }
 
-/* =========================
-   ✅ GATE overlay
-   ========================= */
-.gate{
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-  display:none;
+    /* =========================
+       ✅ GATE overlay
+       ========================= */
+    .gate{
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display:none;
+    }
+    .gate.show{display:block}
 
-  /* ✅ INI YANG BIKIN BISA SCROLL DI MOBILE */
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
+    .gateBackdrop{
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(1200px 600px at 20% 10%, rgba(255,94,168,.35), transparent 60%),
+        radial-gradient(900px 600px at 80% 20%, rgba(138,92,255,.45), transparent 60%),
+        linear-gradient(160deg, #0b1020, #1a1033);
+      opacity: 0;
+      animation: gateBackdropIn 1.05s ease forwards; /* ✅ dipelanin */
+    }
+    @keyframes gateBackdropIn{
+      to{ opacity: 1; }
+    }
 
-  /* optional: biar aman ada padding bawah */
-  padding-bottom: 24px;
-}
-.gate.show{display:block}
+    /* blur konten index */
+    body.gated > #content{
+      filter: blur(10px);
+      pointer-events:none;
+      user-select:none;
+    }
 
-.gateBackdrop{
-  position:absolute;
-  inset:0;
-  background:
-    radial-gradient(1200px 600px at 20% 10%, rgba(255,94,168,.35), transparent 60%),
-    radial-gradient(900px 600px at 80% 20%, rgba(138,92,255,.45), transparent 60%),
-    linear-gradient(160deg, #0b1020, #1a1033);
-  opacity: 0;
-  animation: gateBackdropIn 1.05s ease forwards; /* ✅ dipelanin */
-}
-@keyframes gateBackdropIn{
-  to{ opacity: 1; }
-}
-
-/* blur konten index */
-body.gated > #content{
-  filter: blur(10px);
-  pointer-events:none;
-  user-select:none;
-}
-
-.gateCard{
+    .gateCard{
   position:relative;
   width: min(560px, calc(100% - 32px));
-  margin: 8vh auto 24px; /* ✅ kasih ruang bawah juga */
+  margin: 6vh auto 0;
   border-radius: 22px;
   border: 1px solid rgba(255,255,255,.16);
   background: rgba(255,255,255,.08);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   box-shadow: 0 30px 90px rgba(0,0,0,.55);
-  padding: 18px;
+  padding: 16px;
   color: rgba(255,255,255,.92);
 
-  /* ✅ BIAR CARD-NYA GAK MAKSA FULL & BISA SCROLL DALAM */
-  max-height: calc(100dvh - 16vh);
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+  max-height: 88dvh;          /* ✅ muat layar */
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-start;
 
   opacity: 0;
-  transform: translateY(-22px); /* ✅ muncul dari atas */
-  animation: gateCardDrop 1.25s cubic-bezier(.22,.9,.2,1) forwards; /* ✅ lebih pelan */
+  transform: translateY(-22px);
+  animation: gateCardDrop 1.25s cubic-bezier(.22,.9,.2,1) forwards;
 }
-@keyframes gateCardDrop{
-  to{ opacity: 1; transform: translateY(0); }
-}
-
 
     .gateGif{
       width:80px;
@@ -1491,4 +1479,3 @@ body.gated > #content{
   </script>
 </body>
 </html>
-
