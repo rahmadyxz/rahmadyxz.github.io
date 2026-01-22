@@ -297,25 +297,18 @@
     }
 
     .gateCard{
-  position:relative;
-  width: min(560px, calc(100% - 32px));
-
-  /* ✅ biar ada space bawah & aman sama home bar iPhone */
-  margin: 8vh auto calc(18px + env(safe-area-inset-bottom)) auto;
-
-  border-radius: 22px;
-  border: 1px solid rgba(255,255,255,.16);
-  background: rgba(255,255,255,.08);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  box-shadow: 0 30px 90px rgba(0,0,0,.55);
-  padding: 18px;
-  color: rgba(255,255,255,.92);
-
-  /* ✅ kunci: jangan sampai card setinggi layar */
-  max-height: calc(100dvh - 8vh - 18px - env(safe-area-inset-bottom));
-}
-
+      position:relative;
+      width: min(560px, calc(100% - 32px));
+      margin: 8vh auto 0;
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.08);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 30px 90px rgba(0,0,0,.55);
+      padding: 18px;
+      color: rgba(255,255,255,.92);
+    }
 
     .gateGif{
       width:80px;
@@ -406,22 +399,6 @@
       position:relative;
       z-index:1;
     }
-
-    @media (max-width: 520px){
-  .gateMedia img{
-    max-height: 42vh; /* ✅ lebih kecil dari 52vh supaya bawahnya keliatan */
-  }
-}
-
-    @media (max-width: 420px){
-  .gateCard{
-    margin-top: 6vh;
-    max-height: calc(100dvh - 6vh - 18px - env(safe-area-inset-bottom));
-  }
-  .gateMedia img{
-    max-height: 38vh;
-  }
-}
 
     .loveLayer{
       position:absolute;
