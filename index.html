@@ -297,27 +297,25 @@
     }
 
     .gateCard{
-  position:relative;
-  width: min(560px, calc(100% - 32px));
-  margin: 6vh auto 0;
-  border-radius: 22px;
-  border: 1px solid rgba(255,255,255,.16);
-  background: rgba(255,255,255,.08);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  box-shadow: 0 30px 90px rgba(0,0,0,.55);
-  padding: 16px;
-  color: rgba(255,255,255,.92);
+      position:relative;
+      width: min(560px, calc(100% - 32px));
+      margin: 8vh auto 0;
+      border-radius: 22px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.08);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 30px 90px rgba(0,0,0,.55);
+      padding: 18px;
+      color: rgba(255,255,255,.92);
 
-  max-height: 88dvh;          /* ✅ muat layar */
-  display:flex;
-  flex-direction:column;
-  justify-content:flex-start;
-
-  opacity: 0;
-  transform: translateY(-22px);
-  animation: gateCardDrop 1.25s cubic-bezier(.22,.9,.2,1) forwards;
-}
+      opacity: 0;
+      transform: translateY(-22px); /* ✅ muncul dari atas */
+      animation: gateCardDrop 1.25s cubic-bezier(.22,.9,.2,1) forwards; /* ✅ lebih pelan */
+    }
+    @keyframes gateCardDrop{
+      to{ opacity: 1; transform: translateY(0); }
+    }
 
     .gateGif{
       width:80px;
@@ -777,7 +775,7 @@
 
     // ✅ Gate config
     const CONFIG = {
-      birthday: "2026-01-06", // full date
+      birthday: "2026-02-06", // full date
       gateMessage: "Semoga hari ini kamu senyum terus ya. Aku bangga sama kamu. 💖",
       lockedMessage: "Hanya bisa dibuka pada saat kamu ulang tahun 💗🤍",
 
