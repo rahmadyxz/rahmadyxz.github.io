@@ -268,67 +268,66 @@
     /* =========================
        ✅ GATE overlay
        ========================= */
-    .gate{
-      position: fixed;
-      inset: 0;
-      z-index: 9999;
-      display:none;
-    }
-    .gate.show{display:block}
+.gate{
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display:none;
 
-    .gateBackdrop{
-      position:absolute;
-      inset:0;
-      background:
-        radial-gradient(1200px 600px at 20% 10%, rgba(255,94,168,.35), transparent 60%),
-        radial-gradient(900px 600px at 80% 20%, rgba(138,92,255,.45), transparent 60%),
-        linear-gradient(160deg, #0b1020, #1a1033);
-      opacity: 0;
-      animation: gateBackdropIn 1.05s ease forwards; /* ✅ dipelanin */
-    }
-    @keyframes gateBackdropIn{
-      to{ opacity: 1; }
-    }
+  /* ✅ BIAR BISA SCROLL DI POPUP (overlay), bukan di card */
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 
-    /* blur konten index */
-    body.gated > #content{
-      filter: blur(10px);
-      pointer-events:none;
-      user-select:none;
-    }
+  /* ✅ aman buat notch + home bar iPhone */
+  padding: calc(env(safe-area-inset-top) + 14px) 16px calc(env(safe-area-inset-bottom) + 16px);
+  touch-action: pan-y;
+}
+.gate.show{display:block}
 
-    .gateCard{
-      position:relative;
-      width: min(560px, calc(100% - 32px));
-      margin: 8vh auto 0;
-      border-radius: 22px;
-      border: 1px solid rgba(255,255,255,.16);
-      background: rgba(255,255,255,.08);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      box-shadow: 0 30px 90px rgba(0,0,0,.55);
-      padding: 18px;
-      color: rgba(255,255,255,.92);
-    }
+.gateBackdrop{
+  /* ✅ backdrop jangan ikut scroll & tetap full */
+  position: fixed;
+  inset:0;
+  background:
+    radial-gradient(1200px 600px at 20% 10%, rgba(255,94,168,.35), transparent 60%),
+    radial-gradient(900px 600px at 80% 20%, rgba(138,92,255,.45), transparent 60%),
+    linear-gradient(160deg, #0b1020, #1a1033);
+  opacity: 0;
+  animation: gateBackdropIn 1.05s ease forwards;
+}
 
-    .gateGif{
-      width:80px;
-      margin: 6px 0 6px;
-      display:block;
-      border-radius:12px;
-      filter: drop-shadow(0 4px 10px rgba(0,0,0,.35));
-    }
+@keyframes gateBackdropIn{ to{ opacity: 1; } }
 
-    .gateTop{
-      display:flex; align-items:center; gap:12px;
-      padding: 6px 6px 14px;
-    }
-    .gateDot{
-      width:12px;height:12px;border-radius:50%;
-      background: radial-gradient(circle at 30% 30%, #fff, rgba(255,255,255,.2) 35%, transparent 60%),
-                  linear-gradient(135deg, #ff5ea8, #8a5cff);
-      box-shadow: 0 0 18px rgba(255,94,168,.35);
-    }
+/* blur konten index */
+body.gated > #content{
+  filter: blur(10px);
+  pointer-events:none;
+  user-select:none;
+}
+
+.gateCard{
+  position:relative;
+  width: min(560px, calc(100% - 32px));
+
+  /* ✅ ini yang bikin bawah kepotong di HP */
+  /* margin: 8vh auto 0; */
+  margin: 0 auto;                 /* ✅ biar natural di dalam overlay scroll */
+
+  border-radius: 22px;
+  border: 1px solid rgba(255,255,255,.16);
+  background: rgba(255,255,255,.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 30px 90px rgba(0,0,0,.55);
+  padding: 18px;
+  color: rgba(255,255,255,.92);
+}
+
+/* optional: biar ada jarak dikit dari atas */
+@media (max-width: 520px){
+  .gateCard{ margin-top: 8px; }
+}
+
     .gateTitle{font-weight:900; letter-spacing:.2px}
     .gateSub{font-size:13px; color: rgba(255,255,255,.70); margin-top:2px}
 
