@@ -19,81 +19,14 @@
 }
 
     #confetti{
-      position:fixed; inset:0;
-      width:100%; height:100%;
-      display:block;
-      z-index:0;
-      transition:filter 420ms ease;
-      will-change:filter;
-    }
-
-    /* ===== Butterflies layer ===== */
-    #butterflies{
-      position:fixed; inset:0;
-      z-index:1;
-      pointer-events:none;
-      overflow:hidden;
-    }
-    .bf{
-      position:absolute;
-      width:38px; height:38px;
-      pointer-events:auto;
-      cursor:pointer;
-      opacity:.92;
-      filter: drop-shadow(0 10px 14px rgba(0,0,0,.45));
-      will-change: transform, opacity;
-      animation: bfFly linear forwards;
-      touch-action: manipulation;
-      -webkit-tap-highlight-color: transparent;
-    }
-    .bf::before{
-      content:"";
-      position:absolute; inset:0;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 128 128'%3E%3Cpath fill='%23ff4fa3' d='M64 61c-7-24-35-44-51-23-17 22 5 54 37 58 13 1 17-9 14-35z'/%3E%3Cpath fill='%23ff77bd' d='M64 61c-3-19-24-40-39-23-14 16 5 40 25 43 8 1 12-6 14-20z' opacity='.95'/%3E%3Cpath fill='%23ff4fa3' d='M64 61c7-24 35-44 51-23 17 22-5 54-37 58-13 1-17-9-14-35z'/%3E%3Cpath fill='%23ff77bd' d='M64 61c3-19 24-40 39-23 14 16-5 40-25 43-8 1-12-6-14-20z' opacity='.95'/%3E%3Cpath fill='%23ff2a86' d='M63 62c-6 12-6 27 1 41 2 4 8 4 10 0 7-14 7-29 1-41-2-4-10-4-12 0z'/%3E%3C/svg%3E");
-      background-size:contain;
-      background-repeat:no-repeat;
-      transform-origin:center;
-      animation: bfFlap .36s ease-in-out infinite alternate;
-    }
-    @keyframes bfFlap{
-      0%{ transform: scaleX(1) rotate(-6deg); }
-      100%{ transform: scaleX(0.82) rotate(8deg); }
-    }
-    @keyframes bfFly{
-      0%{
-        transform: translate3d(0, 120vh, 0) translateX(0) rotate(0deg);
-        opacity:0;
-      }
-      10%{opacity:1;}
-      100%{
-        transform: translate3d(0, -130vh, 0) translateX(var(--dx)) rotate(360deg);
-        opacity:0;
-      }
-    }
-
-    /* ledakan love pink (DOM particles) */
-    .heart{
-      position:absolute;
-      width:10px; height:10px;
-      pointer-events:none;
-      transform: translate(-50%,-50%);
-      will-change: transform, opacity;
-      filter: drop-shadow(0 8px 10px rgba(0,0,0,.35));
-      animation: heartPop 700ms ease-out forwards;
-    }
-    .heart::before{
-      content:"";
-      position:absolute; inset:0;
-      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23ff4fa3' d='M12 21s-7.1-4.4-9.6-8.5C.6 9.4 2 6.3 5 5.4c1.9-.6 4 .1 5.2 1.7C11.3 5.5 13.4 4.8 15.3 5.4c3 .9 4.4 4 2.6 7.1C19.1 16.6 12 21 12 21z'/%3E%3C/svg%3E");
-      background-size:contain;
-      background-repeat:no-repeat;
-    }
-    @keyframes heartPop{
-      0%{ opacity:0; transform: translate(-50%,-50%) scale(.6); }
-      10%{ opacity:1; }
-      100%{ opacity:0; transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(1.1); }
-    }
-
+  position:fixed; inset:0;
+  width:100%; height:100%;
+  display:block;
+  z-index:0;
+  transition: opacity 1s ease, filter 420ms ease; /* <- opacity buat fade-out */
+  will-change: opacity, filter;
+  opacity: 1;
+}
     #content{
       position:fixed; inset:0;
       display:grid;
@@ -134,9 +67,18 @@
   width:180px;       /* 200 -> 180 */
   max-width:62vw;    /* 66vw -> 62vw */
   aspect-ratio: 1 / 1;
-  border-radius:18px;
   object-fit:cover;
-  box-shadow:0 16px 40px rgba(0,0,0,.45);
+
+  border-radius:18px;
+
+  /* ✨ LIST BORDER */
+  border: 2px solid rgba(255,255,255,.55);
+
+  /* glow halus */
+  box-shadow:
+    0 0 0 2px rgba(255,105,180,.15),
+    0 0 22px rgba(255,105,180,.35),
+    0 16px 40px rgba(0,0,0,.45);
 }
 
     h1{
@@ -203,6 +145,46 @@
       transform: translateY(10px);
       visibility: hidden;
     }
+    /* ✅ COUNTDOWN di tempat tombol */
+.next-count{
+  margin-top: 16px;
+  width: fit-content;
+  min-width: 140px;
+  padding: 12px 26px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.18);
+  background: rgba(255,255,255,.06);
+  color:#fff;
+  font-weight:900;
+  letter-spacing:.16em;
+  box-shadow: 0 0 18px rgba(255,79,163,.25);
+  user-select:none;
+  pointer-events:none;
+
+  opacity:0;
+  transform: translateY(10px);
+  visibility:hidden;
+}
+
+/* tampil */
+.next-count.show{
+  opacity:1;
+  transform: translateY(0);
+  visibility:visible;
+}
+
+/* anim tiap angka (lebih “hidup”) */
+.next-count.tick{
+  animation: countTick 1s ease forwards;
+}
+
+@keyframes countTick{
+  0%   { opacity:0; transform: translateY(12px) scale(.98); filter: blur(.2px); }
+  18%  { opacity:1; transform: translateY(0)   scale(1.02); filter: blur(0); }
+  70%  { opacity:1; transform: translateY(-2px) scale(1.02); }
+  100% { opacity:0; transform: translateY(-14px) scale(.98); }
+}
+
     .next-btn.show{
       opacity: 1;
       transform: translateY(0);
@@ -612,6 +594,30 @@
       .startPop{ transition:none; }
       .gateBackdrop, .gateCard{ animation:none; opacity:1; transform:none; }
     }
+
+    .nameWrap{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  margin-top:10px;
+}
+
+.sideEmoji{
+  opacity: 0;
+  transform: translateY(6px) scale(.96);
+  filter: drop-shadow(0 0 10px rgba(255,255,255,.5));
+  animation: emojiFadeIn 5s ease forwards;
+  animation-delay: 5.5s; /* ⏱️ ATUR DELAY DI SINI */
+}
+
+@keyframes emojiFadeIn{
+  to{
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
   </style>
 </head>
 
@@ -627,9 +633,14 @@
       <img class="ig-photo" alt="foto" src="images/imelia.jpg" />
 
       <h1 id="h1">HAPPY BIRTHDAY</h1>
-      <h2 id="h2">IMELIA RINJANI AZ-ZAHRA</h2>
-
+      <div class="nameWrap">
+  <span class="sideEmoji">💖</span>
+  <h2 id="h2">IMELIA RINJANI AZ-ZAHRA</h2>
+  <span class="sideEmoji">💖</span>
+</div>
+      <div class="next-count" id="nextCount" aria-hidden="true"></div>
       <button class="next-btn" id="nextBtn" type="button">LANJUT ➜</button>
+      <footer>🎵 One Direction - Where We Are.</footer>
       <footer>Made with love 💖 @rahmadyxz</footer>
     </div>
   </div>
@@ -694,7 +705,7 @@
         <div class="gateIgWrap" aria-label="Foto kita">
           <div class="gateIgLabel">
             <span>Foto 📸</span>
-            <b>Kamu</b>
+            <b>Kamu🤍</b>
           </div>
           <div class="gateIgGrid">
             <img src="images/p1.jpg" alt="foto 1" loading="lazy" decoding="async">
@@ -733,7 +744,7 @@
         </div>
 
         <div class="gateMsg">
-          <div class="gateMsgTitle">Happy birthday 🤍</div>
+          <div class="gateMsgTitle">Happy birthday my babyyyy🤍</div>
           <div class="gateMsgText" id="gateText"></div>
         </div>
 
@@ -765,15 +776,19 @@
     // =========================
     // Config (SETTING DISINI)
     // =========================
-    const AUDIO_SRC = "weare.mp3";     // musik index (loop)
+    const AUDIO_SRC = "direction.mp3";     // musik index (loop)
     const NEXT_PAGE = "page.html";
-    const BTN_DELAY_SEC = 5;
+    const BTN_DELAY_SEC = 15;
 
     // ✅ Gate config
     const CONFIG = {
       birthday: "2026-01-06", // full date
       gateMessage: "Semoga hari ini kamu senyum terus ya. Aku bangga sama kamu. 💖",
       lockedMessage: "Hanya bisa dibuka pada saat kamu ulang tahun 💗🤍",
+      fireworksDelaySec: 2,   // delay awal sebelum mulai (sekali doang pas masuk index)
+      fireworksOnSec: 33,       // nyala berapa detik
+      fireworksOffSec: 2.8,       // mati berapa detik
+      fireworksFadeSec: 1,    // durasi fade in/out (detik)
 
       // volume
       gateMusicVolume: 0.55,
@@ -865,15 +880,59 @@
     // ✅ NEXT BUTTON (delay setelah index masuk)
     // =========================
     const nextBtn = document.getElementById("nextBtn");
-    let btnTimer = 0;
+const nextCount = document.getElementById("nextCount");
 
-    function scheduleNextButton(){
-      if (btnTimer) return;
-      nextBtn.classList.remove("show");
-      btnTimer = setTimeout(() => {
-        nextBtn.classList.add("show");
-      }, Math.max(0, BTN_DELAY_SEC) * 1000);
-    }
+let btnTimer = 0;
+
+function showNextButton(){
+  nextBtn.classList.add("show");
+  nextBtn.disabled = false;
+}
+
+function resetCountdownUI(){
+  if(!nextCount) return;
+  nextCount.classList.remove("show", "tick");
+  nextCount.textContent = "";
+  nextCount.setAttribute("aria-hidden","true");
+}
+
+async function startCountdownThenShowButton(seconds){
+  // safety: kalau kepanggil 2x
+  if (btnTimer) return;
+  btnTimer = 1;
+
+  // tombol disembunyiin dulu
+  nextBtn.classList.remove("show");
+  nextBtn.disabled = true;
+
+  // kalau countdown 0 ya langsung
+  const total = Math.max(0, parseInt(seconds || 0, 10));
+  if(!nextCount || total <= 0){
+    showNextButton();
+    return;
+  }
+
+  // tampilkan countdown di tempat tombol
+  nextCount.classList.add("show");
+  nextCount.setAttribute("aria-hidden","false");
+
+  for(let s = total; s >= 1; s--){
+    // set angka
+    nextCount.textContent = String(s);
+
+    // restart animasi tiap angka
+    nextCount.classList.remove("tick");
+    void nextCount.offsetHeight; // force reflow biar anim ke-reset
+    nextCount.classList.add("tick");
+
+    // tunggu 1 detik per angka (sesuai durasi anim)
+    await new Promise(r => setTimeout(r, 1000));
+  }
+
+  // selesai: hide countdown, show tombol
+  resetCountdownUI();
+  showNextButton();
+}
 
     nextBtn.addEventListener("click", () => {
       nextBtn.disabled = true;
@@ -886,6 +945,13 @@
     // ==========================
     const canvas = document.getElementById("confetti");
     const ctx = canvas.getContext("2d", { alpha:true });
+    function setConfettiOpacityInstant(val){
+  const prev = canvas.style.transition;
+  canvas.style.transition = "none";      // matiin transisi dulu
+  canvas.style.opacity = String(val);    // set langsung
+  canvas.offsetHeight;                   // force reflow biar ke-apply
+  canvas.style.transition = prev || "";  // balikin transisi
+}
 
     let DPR = Math.max(1, Math.min(1.6, window.devicePixelRatio || 1));
     let W = 0, H = 0;
@@ -1393,13 +1459,68 @@
 
         if(!enteredIndexOnce){
           enteredIndexOnce = true;
-          startFireworksLoop();
+          // 🔥 FIREWORKS DELAY (pakai detik)
+  setTimeout(() => {
+  runFireworksCycle();
+}, (CONFIG.fireworksDelaySec ?? 0) * 1000);
           startButterflies();
           await startIndexMusic();
-          scheduleNextButton();
+          resetCountdownUI();
+startCountdownThenShowButton(BTN_DELAY_SEC);
         }
       }, 980); // ✅ dipelanin
     }
+
+    let fwCycleTimer = 0;
+let fwCycleRunning = false;
+
+function setConfettiFadeSeconds(sec){
+  canvas.style.transitionDuration = `${Math.max(0, sec)}s`;
+}
+
+function sleepMs(ms){ return new Promise(r => setTimeout(r, ms)); }
+
+async function runFireworksCycle(){
+  if(prefersReduced) return;
+  if(fwCycleRunning) return;
+  fwCycleRunning = true;
+
+  // set durasi fade dari config
+  const fadeSec = Number(CONFIG.fireworksFadeSec ?? 0.0);
+  setConfettiFadeSeconds(fadeSec);
+
+  const onMs  = Math.max(0, Number(CONFIG.fireworksOnSec  ?? 30)) * 1000;
+  const offMs = Math.max(0, Number(CONFIG.fireworksOffSec ?? 6))  * 1000;
+
+  // loop terus
+  while(fwCycleRunning){
+    // FADE IN + START
+    canvas.style.opacity = "1";
+    startFireworksLoop();
+
+    await sleepMs(onMs);
+
+    // FADE OUT
+    canvas.style.opacity = "0";
+    await sleepMs(fadeSec * 1000);
+
+    // STOP (biar bener-bener hemat & berhenti)
+    stopFireworksLoop();
+    ctx.clearRect(0,0,W,H);
+
+    await sleepMs(offMs);
+
+    // lanjut loop => balik ke start lagi
+  }
+}
+
+function stopFireworksCycle(){
+  fwCycleRunning = false;
+  stopFireworksLoop();
+  canvas.style.opacity = "0";
+  ctx.clearRect(0,0,W,H);
+}
+
 
     // START POPUP FLOW
     function showGateNow(){
