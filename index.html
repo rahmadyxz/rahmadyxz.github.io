@@ -269,11 +269,14 @@
        ✅ GATE overlay
        ========================= */
     .gate{
-      position: fixed;
-      inset: 0;
-      z-index: 9999;
-      display:none;
-    }
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display:none;
+
+  overflow-y: auto;                 /* ✅ KUNCI SCROLL */
+  -webkit-overflow-scrolling: touch;
+}
     .gate.show{display:block}
 
     .gateBackdrop{
@@ -298,18 +301,16 @@
     }
 
     .gateCard{
-      position:relative;
-      width: min(560px, calc(100% - 32px));
-      margin: 8vh auto 0;
-      border-radius: 22px;
-      border: 1px solid rgba(255,255,255,.16);
-      background: rgba(255,255,255,.08);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      box-shadow: 0 30px 90px rgba(0,0,0,.55);
-      padding: 18px;
-      color: rgba(255,255,255,.92);
-    }
+  position:relative;
+  width: min(560px, calc(100% - 32px));
+  margin: 16px auto;   /* ❗ ganti dari 8vh */
+  border-radius: 22px;
+  border: 1px solid rgba(255,255,255,.16);
+  background: rgba(255,255,255,.08);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 30px 90px rgba(0,0,0,.55);
+  padding: 18px;
+}
 
     .gateGif{
       width:80px;
